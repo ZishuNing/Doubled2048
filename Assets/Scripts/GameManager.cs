@@ -101,7 +101,8 @@ public class GameManager : MonoBehaviour
     {
         int hiscore = LoadHiscore();
 
-        if (score > hiscore) {
+        if (score > hiscore)
+        {
             PlayerPrefs.SetInt("hiscore", score);
         }
     }
