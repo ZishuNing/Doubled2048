@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private TileBoard boardPlayer;
-    [SerializeField] private TileBoard boardEnemy;
+    [SerializeField] private TileBoardEnemy boardEnemy;
     [SerializeField] private CanvasGroup gameOver;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI hiscoreText;

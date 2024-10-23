@@ -8,8 +8,11 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance { get; private set; }
 
     [SerializeField] private TileBoard boardPlayer;
-    [SerializeField] private TileBoard boardEnemy;
+    [SerializeField] private TileBoardEnemy boardEnemy;
     [SerializeField] private List<TextMeshProUGUI> rowText = new List<TextMeshProUGUI>();
+
+    private int frameCounter = 0;  // 用于计数帧数
+    private int framesPerCalculation = 5;  // 每5帧执行一次计算
 
     private void Awake()
     {
@@ -21,8 +24,6 @@ public class ScoreManager : MonoBehaviour
         {
             Instance = this;
         }
-
-        boardPlayer.OnTurnEnd += EndTurn;
     }
 
     private void OnDestroy()
@@ -33,7 +34,20 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    public void EndTurn()
+    private void Update()
+    {
+        // 增加帧计数器
+        frameCounter++;
+
+        // 当帧计数达到指定的帧数时，进行计算
+        if (frameCounter >= framesPerCalculation)
+        {
+            CalScore();
+            frameCounter = 0;  // 重置帧计数器
+        }
+    }
+
+    public void CalScore()
     {
         List<int> scorePlayer = boardPlayer.GetRowScore();
         List<int> scoreEnemy = boardEnemy.GetRowScore();
@@ -41,15 +55,15 @@ public class ScoreManager : MonoBehaviour
         {
             if (scorePlayer[i] > scoreEnemy[i])
             {
-                rowText[i].text = "Win";
+                rowText[i].text = scorePlayer[i]+":"+scoreEnemy[i]+ " Win";
             }
             else if (scorePlayer[i] < scoreEnemy[i])
             {
-                rowText[i].text = "Lose";
+                rowText[i].text = scorePlayer[i] + ":" + scoreEnemy[i] + "Lose";
             }
             else
             {
-                rowText[i].text = "Draw";
+                rowText[i].text = scorePlayer[i] + ":" + scoreEnemy[i] + "Draw";
             }
         }
     }

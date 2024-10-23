@@ -64,8 +64,6 @@ public class TileBoardEnemy : MonoBehaviour
 
     private void Move(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
     {
-        bool changed = false;
-
         for (int x = startX; x >= 0 && x < grid.Width; x += incrementX)
         {
             for (int y = startY; y >= 0 && y < grid.Height; y += incrementY)
@@ -74,15 +72,14 @@ public class TileBoardEnemy : MonoBehaviour
 
                 if (cell.Occupied)
                 {
-                    changed |= MoveTile(cell.tile, direction);
+                    MoveTile(cell.tile, direction);
                 }
             }
         }
 
-        if (changed)
-        {
-            StartCoroutine(WaitForChanges());
-        }
+        //if (changed) {
+        StartCoroutine(WaitForChanges());
+        //}
     }
 
     private bool MoveTile(Tile tile, Vector2Int direction)
@@ -130,6 +127,7 @@ public class TileBoardEnemy : MonoBehaviour
         TileState newState = tileStates[index];
 
         b.SetState(newState);
+        GameManager.Instance.IncreaseScore(newState.number);
     }
 
     private int IndexOf(TileState state)
@@ -200,5 +198,30 @@ public class TileBoardEnemy : MonoBehaviour
         }
 
         return true;
+    }
+
+    // 获取每一行的分数
+    public List<int> GetRowScore()
+    {
+        List<int> rowScore = new List<int>();
+
+        for (int y = 0; y < grid.Height; y++)
+        {
+            int score = 0;
+
+            for (int x = 0; x < grid.Width; x++)
+            {
+                TileCell cell = grid.GetCell(x, y);
+
+                if (cell.Occupied)
+                {
+                    score += cell.tile.state.number;
+                }
+            }
+
+            rowScore.Add(score);
+        }
+
+        return rowScore;
     }
 }

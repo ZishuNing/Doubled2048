@@ -59,8 +59,6 @@ public class TileBoard : MonoBehaviour
 
     private void Move(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
     {
-        bool changed = false;
-
         for (int x = startX; x >= 0 && x < grid.Width; x += incrementX)
         {
             for (int y = startY; y >= 0 && y < grid.Height; y += incrementY)
@@ -68,14 +66,14 @@ public class TileBoard : MonoBehaviour
                 TileCell cell = grid.GetCell(x, y);
 
                 if (cell.Occupied) {
-                    changed |= MoveTile(cell.tile, direction);
+                    MoveTile(cell.tile, direction);
                 }
             }
         }
 
-        if (changed) {
-            StartCoroutine(WaitForChanges());
-        }
+        //if (changed) {
+        StartCoroutine(WaitForChanges());
+        //}
     }
 
     private bool MoveTile(Tile tile, Vector2Int direction)
@@ -150,7 +148,8 @@ public class TileBoard : MonoBehaviour
             tile.locked = false;
         }
 
-        if (tiles.Count != grid.Size) {
+        if (tiles.Count != grid.Size)
+        {
             CreateTile();
         }
 
