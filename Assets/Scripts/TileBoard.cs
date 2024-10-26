@@ -12,13 +12,46 @@ public class TileBoard : MonoBehaviour
     private List<Tile> tiles;
     private bool waiting;
 
-    //回合结束事件
-    public event Action OnTurnEnd;
-
     private void Awake()
     {
         grid = GetComponentInChildren<TileGrid>();
         tiles = new List<Tile>(16);
+        Events.Instance.OnGameStart += NewGame;
+    }
+
+    private void NewGame()
+    {
+        // update board state
+        this.ClearBoard();
+        this.CreateTile();
+        this.CreateTile();
+    }
+
+    private void OnDestroy()
+    {
+        Events.Instance.OnGameStart -= NewGame;
+    }
+
+    private void Update()
+    {
+        if (waiting) return;
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            Move(Vector2Int.up, 0, 1, 1, 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            Move(Vector2Int.left, 1, 1, 0, 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            Move(Vector2Int.down, 0, 1, grid.Height - 2, -1);
+        }
+        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            Move(Vector2Int.right, grid.Width - 2, -1, 0, 1);
+        }
     }
 
     public void ClearBoard()
@@ -42,21 +75,6 @@ public class TileBoard : MonoBehaviour
         tiles.Add(tile);
     }
 
-    private void Update()
-    {
-        if (waiting) return;
-
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) {
-            Move(Vector2Int.up, 0, 1, 1, 1);
-        } else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) {
-            Move(Vector2Int.left, 1, 1, 0, 1);
-        } else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) {
-            Move(Vector2Int.down, 0, 1, grid.Height - 2, -1);
-        } else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) {
-            Move(Vector2Int.right, grid.Width - 2, -1, 0, 1);
-        }
-    }
-
     private void Move(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
     {
         for (int x = startX; x >= 0 && x < grid.Width; x += incrementX)
@@ -70,10 +88,7 @@ public class TileBoard : MonoBehaviour
                 }
             }
         }
-
-        //if (changed) {
         StartCoroutine(WaitForChanges());
-        //}
     }
 
     private bool MoveTile(Tile tile, Vector2Int direction)
@@ -121,7 +136,6 @@ public class TileBoard : MonoBehaviour
         TileState newState = tileStates[index];
 
         b.SetState(newState);
-        GameManager.Instance.IncreaseScore(newState.number);
     }
 
     private int IndexOf(TileState state)
@@ -153,13 +167,14 @@ public class TileBoard : MonoBehaviour
             CreateTile();
         }
 
-        //if (CheckForGameOver())
-        //{
-        //    GameManager.Instance.GameOver();
-        //}
+        //等一帧
+        yield return null;
 
-        // 移动完成后触发事件
-        OnTurnEnd?.Invoke();
+        if (tiles.Count != grid.Size)
+        {
+            // 移动完成后触发事件
+            Events.Instance.TurnEnd();
+        }
     }
 
     public bool CheckForGameOver()

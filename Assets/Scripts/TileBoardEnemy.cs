@@ -15,6 +15,42 @@ public class TileBoardEnemy : MonoBehaviour
     {
         grid = GetComponentInChildren<TileGrid>();
         tiles = new List<Tile>(16);
+        Events.Instance.OnGameStart += NewGame;
+    }
+
+    private void NewGame()
+    {
+        // update board state
+        this.ClearBoard();
+        this.CreateTile();
+        this.CreateTile();
+    }
+
+    private void OnDestroy()
+    {
+        Events.Instance.OnGameStart -= NewGame;
+    }
+
+    private void Update()
+    {
+        if (waiting) return;
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            Move(Vector2Int.up, 0, 1, 1, 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            Move(Vector2Int.left, 1, 1, 0, 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            Move(Vector2Int.down, 0, 1, grid.Height - 2, -1);
+        }
+        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            Move(Vector2Int.right, grid.Width - 2, -1, 0, 1);
+        }
     }
 
     public void ClearBoard()
@@ -38,28 +74,6 @@ public class TileBoardEnemy : MonoBehaviour
         tile.SetState(tileStates[0]);
         tile.Spawn(grid.GetRandomEmptyCell());
         tiles.Add(tile);
-    }
-
-    private void Update()
-    {
-        if (waiting) return;
-
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            Move(Vector2Int.up, 0, 1, 1, 1);
-        }
-        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            Move(Vector2Int.left, 1, 1, 0, 1);
-        }
-        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            Move(Vector2Int.down, 0, 1, grid.Height - 2, -1);
-        }
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            Move(Vector2Int.right, grid.Width - 2, -1, 0, 1);
-        }
     }
 
     private void Move(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
@@ -127,7 +141,6 @@ public class TileBoardEnemy : MonoBehaviour
         TileState newState = tileStates[index];
 
         b.SetState(newState);
-        GameManager.Instance.IncreaseScore(newState.number);
     }
 
     private int IndexOf(TileState state)

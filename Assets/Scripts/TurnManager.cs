@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using TMPro;
 using UnityEngine;
 
@@ -23,9 +24,14 @@ public class TurnManager : MonoBehaviour
         {
             Instance = this;
         }
-
-        boardPlayer.OnTurnEnd += EndTurn;
     }
+
+    private void Start()
+    {
+        Events.Instance.OnTurnEnd += EndTurn;
+        Events.Instance.OnGameStart += NewGame;
+    }
+
 
     private void OnDestroy()
     {
@@ -33,12 +39,21 @@ public class TurnManager : MonoBehaviour
         {
             Instance = null;
         }
+
+        Events.Instance.OnTurnEnd -= EndTurn;
+        Events.Instance.OnGameStart -= NewGame;
     }
 
     public void EndTurn()
     {
         // 增加回合数
         round++;
+        roundText.text = round.ToString();
+    }
+
+    public void NewGame()
+    {
+        round = 0;
         roundText.text = round.ToString();
     }
 }

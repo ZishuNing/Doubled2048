@@ -11,9 +11,6 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private TileBoardEnemy boardEnemy;
     [SerializeField] private List<TextMeshProUGUI> rowText = new List<TextMeshProUGUI>();
 
-    private int frameCounter = 0;  // 用于计数帧数
-    private int framesPerCalculation = 5;  // 每5帧执行一次计算
-
     private void Awake()
     {
         if (Instance != null)
@@ -24,6 +21,12 @@ public class ScoreManager : MonoBehaviour
         {
             Instance = this;
         }
+        Events.Instance.OnGameStart += CleanScore;
+    }
+
+    private void Start()
+    {
+        Events.Instance.OnTurnEnd += CalScore;
     }
 
     private void OnDestroy()
@@ -32,19 +35,9 @@ public class ScoreManager : MonoBehaviour
         {
             Instance = null;
         }
-    }
 
-    private void Update()
-    {
-        // 增加帧计数器
-        frameCounter++;
-
-        // 当帧计数达到指定的帧数时，进行计算
-        if (frameCounter >= framesPerCalculation)
-        {
-            CalScore();
-            frameCounter = 0;  // 重置帧计数器
-        }
+        Events.Instance.OnTurnEnd -= CalScore;
+        Events.Instance.OnGameStart -= CleanScore;
     }
 
     public void CalScore()
@@ -55,16 +48,27 @@ public class ScoreManager : MonoBehaviour
         {
             if (scorePlayer[i] > scoreEnemy[i])
             {
-                rowText[i].text = scorePlayer[i]+":"+scoreEnemy[i]+ " Win";
+                rowText[i].color = Color.green;
+                rowText[i].text = (scorePlayer[i] - scoreEnemy[i]).ToString();
             }
             else if (scorePlayer[i] < scoreEnemy[i])
             {
-                rowText[i].text = scorePlayer[i] + ":" + scoreEnemy[i] + "Lose";
+                rowText[i].color = Color.red;
+                rowText[i].text = (scoreEnemy[i] - scorePlayer[i]).ToString();
             }
             else
             {
-                rowText[i].text = scorePlayer[i] + ":" + scoreEnemy[i] + "Draw";
+                rowText[i].color = Color.green;
+                rowText[i].text = (scorePlayer[i] - scoreEnemy[i]).ToString();
             }
+        }
+    }
+
+    public void CleanScore()
+    {
+        foreach (var text in rowText)
+        {
+            text.text = "";
         }
     }
 }
