@@ -3895,6 +3895,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 19b4310b755bd894a999f0202d2f671d, type: 2}
   - {fileID: 11400000, guid: 0a300fade7d43e94abe37c35dc38c0d9, type: 2}
   - {fileID: 11400000, guid: 1be54a437c57bd940a0bc02aae22d9be, type: 2}
+  levelConfig: {fileID: 11400000, guid: 4f965572456270a439cfa6196e59718a, type: 2}
 --- !u!1 &1989713020
 GameObject:
   m_ObjectHideFlags: 0

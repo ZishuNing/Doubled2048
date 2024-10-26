@@ -49,6 +49,13 @@ public class TurnManager : MonoBehaviour
         // 增加回合数
         round++;
         roundText.text = round.ToString();
+
+        // 每10回合结算一次
+        if (round % 10 ==0)
+        {
+            // 结算
+            Events.Instance.Settlement();
+        }
     }
 
     public void NewGame()

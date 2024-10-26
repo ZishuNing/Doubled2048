@@ -17,6 +17,7 @@ public class TileBoard : MonoBehaviour
         grid = GetComponentInChildren<TileGrid>();
         tiles = new List<Tile>(16);
         Events.Instance.OnGameStart += NewGame;
+        Events.Instance.OnSettlement += StartBattle;
     }
 
     private void NewGame()
@@ -27,9 +28,16 @@ public class TileBoard : MonoBehaviour
         this.CreateTile();
     }
 
+    private void StartBattle()
+    {
+        // 开始战斗，先把所有块向右移动
+        MoveWithoutMerge(Vector2Int.right, grid.Width - 2, -1, 0, 1);
+    }
+
     private void OnDestroy()
     {
         Events.Instance.OnGameStart -= NewGame;
+        Events.Instance.OnSettlement -= StartBattle;
     }
 
     private void Update()
@@ -91,6 +99,22 @@ public class TileBoard : MonoBehaviour
         StartCoroutine(WaitForChanges());
     }
 
+    private void MoveWithoutMerge(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
+    {
+        for (int x = startX; x >= 0 && x < grid.Width; x += incrementX)
+        {
+            for (int y = startY; y >= 0 && y < grid.Height; y += incrementY)
+            {
+                TileCell cell = grid.GetCell(x, y);
+
+                if (cell.Occupied)
+                {
+                    MoveTileWithoutMerge(cell.tile, direction);
+                }
+            }
+        }
+    }
+
     private bool MoveTile(Tile tile, Vector2Int direction)
     {
         TileCell newCell = null;
@@ -120,6 +144,28 @@ public class TileBoard : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void MoveTileWithoutMerge(Tile tile, Vector2Int direction)
+    {
+        TileCell newCell = null;
+        TileCell adjacent = grid.GetAdjacentCell(tile.cell, direction);
+
+        while (adjacent != null)
+        {
+            if (adjacent.Occupied)
+            {
+                break;
+            }
+
+            newCell = adjacent;
+            adjacent = grid.GetAdjacentCell(adjacent, direction);
+        }
+
+        if (newCell != null)
+        {
+            tile.MoveTo(newCell);
+        }
     }
 
     private bool CanMerge(Tile a, Tile b)
