@@ -7,6 +7,6 @@ public class TileState : ScriptableObject
     public Color backgroundColor;
     public Color textColor;
 
-    public float attack = 0.5f;
+    public int attack = 1;
     public int attackRange = 1;
 }

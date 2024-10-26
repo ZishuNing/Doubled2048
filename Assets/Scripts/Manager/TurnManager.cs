@@ -54,8 +54,15 @@ public class TurnManager : MonoBehaviour
         if (round % 10 ==0)
         {
             // Ω·À„
-            Events.Instance.Settlement();
+            Events.Instance.BattleStart();
+            StartCoroutine(WaitBattleChanges());
         }
+    }
+
+    IEnumerator WaitBattleChanges()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Events.Instance.BattleEnd();
     }
 
     public void NewGame()

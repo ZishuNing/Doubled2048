@@ -13,7 +13,8 @@ public class Events : MonoBehaviour
     //回合结束事件
     public event Action OnTurnEnd;
     //每10回合触发一次结算事件
-    public event Action OnSettlement;
+    public event Action OnBattleStart;
+    public event Action OnBattleEnd;
 
     private void Awake()
     {
@@ -45,8 +46,13 @@ public class Events : MonoBehaviour
         OnTurnEnd?.Invoke();
     }
 
-    public void Settlement()
+    public void BattleStart()
     {
-        OnSettlement?.Invoke();
+        OnBattleStart?.Invoke();
+    }
+
+    public void BattleEnd()
+    {
+        OnBattleEnd?.Invoke();
     }
 }

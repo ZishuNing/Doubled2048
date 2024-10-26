@@ -10,14 +10,13 @@ public class TileBoardEnemy : MonoBehaviour
 
     private TileGrid grid;
     private List<Tile> tiles;
-    private bool waiting;
 
     private void Awake()
     {
         grid = GetComponentInChildren<TileGrid>();
         tiles = new List<Tile>(16);
         Events.Instance.OnGameStart += NewGame;
-        Events.Instance.OnSettlement += StartBattle;
+        Events.Instance.OnBattleStart += StartBattle;
     }
 
     private void NewGame()
@@ -34,12 +33,13 @@ public class TileBoardEnemy : MonoBehaviour
     {
         // 开始战斗，先把所有块向左移动
         MoveWithoutMerge(Vector2Int.left, 1, 1, 0, 1);
+        StartCoroutine(WaitMoveAndRegisterDamage());
     }
 
     private void OnDestroy()
     {
         Events.Instance.OnGameStart -= NewGame;
-        Events.Instance.OnSettlement -= StartBattle;
+        Events.Instance.OnBattleStart -= StartBattle;
     }
 
     public void ClearBoard()
@@ -126,5 +126,31 @@ public class TileBoardEnemy : MonoBehaviour
         }
 
         return rowScore;
+    }
+
+    IEnumerator WaitMoveAndRegisterDamage()
+    {
+        yield return new WaitForSeconds(0.2f);
+        RegisterDamage();
+    }
+
+    // 我方给敌人造成伤害
+    public void RegisterDamage()
+    {
+        for (int y = 0; y < grid.Height; y++)
+        {
+            for (int x = 0; x < grid.Width; x++)
+            {
+                TileCell cell = grid.GetCell(x, y);
+                if (cell.Occupied && cell.tile.state.number > 1)
+                {
+                    Tile targetTile = BattleManager.Instance.FindNearestTargetTile(cell.coordinates, PlayerType.Enemy);
+                    if (targetTile == null) continue;
+                    int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Enemy);
+                    if (distance > cell.tile.state.attackRange) continue;
+                    BattleManager.Instance.RegisterDamage(targetTile, cell.tile.state.attack, PlayerType.Enemy);
+                }
+            }
+        }
     }
 }

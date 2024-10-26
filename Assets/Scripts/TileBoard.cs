@@ -10,14 +10,15 @@ public class TileBoard : MonoBehaviour
 
     private TileGrid grid;
     private List<Tile> tiles;
-    private bool waiting;
+    private bool waiting = false;
 
     private void Awake()
     {
         grid = GetComponentInChildren<TileGrid>();
         tiles = new List<Tile>(16);
         Events.Instance.OnGameStart += NewGame;
-        Events.Instance.OnSettlement += StartBattle;
+        Events.Instance.OnBattleStart += StartBattle;
+        Events.Instance.OnBattleEnd += EndBattle;
     }
 
     private void NewGame()
@@ -30,14 +31,21 @@ public class TileBoard : MonoBehaviour
 
     private void StartBattle()
     {
+        waiting = true;
         // 开始战斗，先把所有块向右移动
         MoveWithoutMerge(Vector2Int.right, grid.Width - 2, -1, 0, 1);
+        StartCoroutine(WaitMoveAndRegisterDamage());
+    }
+
+    private void EndBattle()
+    {
+        waiting = false;
     }
 
     private void OnDestroy()
     {
         Events.Instance.OnGameStart -= NewGame;
-        Events.Instance.OnSettlement -= StartBattle;
+        Events.Instance.OnBattleStart -= StartBattle;
     }
 
     private void Update()
@@ -96,7 +104,7 @@ public class TileBoard : MonoBehaviour
                 }
             }
         }
-        StartCoroutine(WaitForChanges());
+        StartCoroutine(WaitForMove());
     }
 
     private void MoveWithoutMerge(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
@@ -196,7 +204,7 @@ public class TileBoard : MonoBehaviour
         return -1;
     }
 
-    private IEnumerator WaitForChanges()
+    private IEnumerator WaitForMove()
     {
         waiting = true;
 
@@ -281,4 +289,30 @@ public class TileBoard : MonoBehaviour
         return rowScore;
     }
 
+    IEnumerator WaitMoveAndRegisterDamage()
+    {
+        yield return new WaitForSeconds(0.2f);
+        RegisterDamage();
+    }
+
+    // 我方给敌人造成伤害
+    public void RegisterDamage()
+    {
+        for (int y = 0; y < grid.Height; y++)
+        {
+            for (int x = 0; x < grid.Width; x++)
+            {
+                TileCell cell = grid.GetCell(x, y);
+                if (cell.Occupied && cell.tile.state.number > 1)
+                {
+                    //Debug.Log("Register Damage: " + cell.coordinates + ", Damage: " + cell.tile.state.attack);
+                    Tile targetTile = BattleManager.Instance.FindNearestTargetTile(cell.coordinates, PlayerType.Player);
+                    if (targetTile == null) continue;
+                    int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Player);
+                    if (distance > cell.tile.state.attackRange) continue;
+                    BattleManager.Instance.RegisterDamage(targetTile, cell.tile.state.attack, PlayerType.Player);
+                }
+            }
+        }
+    }
 }
