@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,8 +7,9 @@ public class TileBoardEnemy : MonoBehaviour
 {
     [SerializeField] private Tile tilePrefab;
     [SerializeField] private List<LevelConfig> levelConfigs;
-    [SerializeField] private LevelConfig levelConfig;
 
+    private LevelConfig levelConfig;
+    private int CurrentLevel=0;
     private TileGrid grid;
     private List<Tile> tiles;
 
@@ -17,13 +19,15 @@ public class TileBoardEnemy : MonoBehaviour
         tiles = new List<Tile>(16);
         Events.Instance.OnGameStart += NewGame;
         Events.Instance.OnLittleBattleStart += StartLittleBattle;
+        Events.Instance.OnBattleEnd += BattleEnd;
     }
 
     private void NewGame()
     {
         // update board state
         this.ClearBoard();
-        foreach (var tile in levelConfig.tiles)
+        CurrentLevel = 0;
+        foreach (var tile in levelConfigs[CurrentLevel].tiles)
         {
             this.CreateSpecificTile(tile);
         }
@@ -36,10 +40,22 @@ public class TileBoardEnemy : MonoBehaviour
         StartCoroutine(WaitMoveAndRegisterDamage());
     }
 
+    private void BattleEnd()
+    {
+        CurrentLevel++;
+        levelConfig = levelConfigs[CurrentLevel % levelConfigs.Count];
+
+        foreach (var tile in levelConfig.tiles)
+        {
+            this.CreateSpecificTile(tile);
+        }
+    }
+
     private void OnDestroy()
     {
         Events.Instance.OnGameStart -= NewGame;
         Events.Instance.OnLittleBattleStart -= StartLittleBattle;
+        Events.Instance.OnBattleEnd -= BattleEnd;
     }
 
     public void ClearBoard()
