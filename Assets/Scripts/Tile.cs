@@ -64,6 +64,17 @@ public class Tile : MonoBehaviour
         StartCoroutine(Animate(cell.transform.position, true));
     }
 
+    public void DestroyTile()
+    {
+        if (this.cell != null)
+        {
+            this.cell.tile = null;
+        }
+
+        this.cell = null;
+        Destroy(gameObject);
+    }
+
     private IEnumerator Animate(Vector3 to, bool merging)
     {
         float elapsed = 0f;

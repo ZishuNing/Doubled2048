@@ -1,16 +1,16 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TurnManager : MonoBehaviour
 {
     public static TurnManager Instance { get; private set; }
 
     [SerializeField] private TileBoard boardPlayer;
-    [SerializeField] private int maxRounds = 10;
     [SerializeField] private TextMeshProUGUI roundText;
+    [SerializeField] private Button battleButton;
     public int round { get; private set; } = 0;
 
 
@@ -30,8 +30,16 @@ public class TurnManager : MonoBehaviour
     {
         Events.Instance.OnTurnEnd += EndTurn;
         Events.Instance.OnGameStart += NewGame;
-    }
+        Events.Instance.OnLittleBattleStart += LittleBattleStart;
 
+        battleButton.interactable = false;
+        battleButton.onClick.AddListener(() =>
+        {
+            // 结算
+            battleButton.interactable = false;
+            Events.Instance.LittleBattleStart();
+        });
+    }
 
     private void OnDestroy()
     {
@@ -53,16 +61,21 @@ public class TurnManager : MonoBehaviour
         // 每10回合结算一次
         if (round % 10 ==0)
         {
-            // 结算
+            // 打开开战按钮
+            battleButton.interactable = true;
             Events.Instance.BattleStart();
-            StartCoroutine(WaitBattleChanges());
         }
     }
 
-    IEnumerator WaitBattleChanges()
+    private void LittleBattleStart()
+    {
+        StartCoroutine(WaitLittleBattleChanges());
+    }
+
+    IEnumerator WaitLittleBattleChanges()
     {
         yield return new WaitForSeconds(0.5f);
-        Events.Instance.BattleEnd();
+        Events.Instance.LittleBattleEnd();
     }
 
     public void NewGame()

@@ -6,7 +6,6 @@ using UnityEngine;
 public class TileBoard : MonoBehaviour
 {
     [SerializeField] private Tile tilePrefab;
-    [SerializeField] private TileState[] tileStates;
 
     private TileGrid grid;
     private List<Tile> tiles;
@@ -18,6 +17,7 @@ public class TileBoard : MonoBehaviour
         tiles = new List<Tile>(16);
         Events.Instance.OnGameStart += NewGame;
         Events.Instance.OnBattleStart += StartBattle;
+        Events.Instance.OnLittleBattleStart += StartLittleBattle;
         Events.Instance.OnBattleEnd += EndBattle;
     }
 
@@ -32,6 +32,10 @@ public class TileBoard : MonoBehaviour
     private void StartBattle()
     {
         waiting = true;
+    }
+
+    private void StartLittleBattle()
+    {
         // 开始战斗，先把所有块向右移动
         MoveWithoutMerge(Vector2Int.right, grid.Width - 2, -1, 0, 1);
         StartCoroutine(WaitMoveAndRegisterDamage());
@@ -46,6 +50,8 @@ public class TileBoard : MonoBehaviour
     {
         Events.Instance.OnGameStart -= NewGame;
         Events.Instance.OnBattleStart -= StartBattle;
+        Events.Instance.OnLittleBattleStart -= StartLittleBattle;
+        Events.Instance.OnBattleEnd -= EndBattle;
     }
 
     private void Update()
@@ -77,7 +83,7 @@ public class TileBoard : MonoBehaviour
         }
 
         foreach (var tile in tiles) {
-            Destroy(tile.gameObject);
+            if (tile != null) Destroy(tile.gameObject);
         }
 
         tiles.Clear();
@@ -86,7 +92,7 @@ public class TileBoard : MonoBehaviour
     public void CreateTile()
     {
         Tile tile = Instantiate(tilePrefab, grid.transform);
-        tile.SetState(tileStates[0]);
+        tile.SetState(TilesManager.Instance.GetTileState(0));
         tile.Spawn(grid.GetRandomEmptyCell());
         tiles.Add(tile);
     }
@@ -186,22 +192,10 @@ public class TileBoard : MonoBehaviour
         tiles.Remove(a);
         a.Merge(b.cell);
 
-        int index = Mathf.Clamp(IndexOf(b.state) + 1, 0, tileStates.Length - 1);
-        TileState newState = tileStates[index];
+        int index = Mathf.Clamp(TilesManager.Instance.IndexOfTileStates(b.state) + 1, 0, TilesManager.Instance.GetTileStatesLength() - 1);
+        TileState newState = TilesManager.Instance.GetTileState(index);
 
         b.SetState(newState);
-    }
-
-    private int IndexOf(TileState state)
-    {
-        for (int i = 0; i < tileStates.Length; i++)
-        {
-            if (state == tileStates[i]) {
-                return i;
-            }
-        }
-
-        return -1;
     }
 
     private IEnumerator WaitForMove()
@@ -279,7 +273,7 @@ public class TileBoard : MonoBehaviour
 
                 if (cell.Occupied)
                 {
-                    score += cell.tile.state.number;
+                    score += TilesManager.Instance.GetPowerOfTwo(cell.tile.state.number); ;
                 }
             }
 
@@ -291,7 +285,7 @@ public class TileBoard : MonoBehaviour
 
     IEnumerator WaitMoveAndRegisterDamage()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.15f);
         RegisterDamage();
     }
 

@@ -42,26 +42,38 @@ public class ScoreManager : MonoBehaviour
 
     public void CalScore()
     {
-        //List<int> scorePlayer = boardPlayer.GetRowScore();
-        //List<int> scoreEnemy = boardEnemy.GetRowScore();
-        //for (int i = 0; i < scorePlayer.Count; i++)
-        //{
-        //    if (scorePlayer[i] > scoreEnemy[i])
-        //    {
-        //        rowText[i].color = Color.green;
-        //        rowText[i].text = (scorePlayer[i] - scoreEnemy[i]).ToString();
-        //    }
-        //    else if (scorePlayer[i] < scoreEnemy[i])
-        //    {
-        //        rowText[i].color = Color.red;
-        //        rowText[i].text = (scoreEnemy[i] - scorePlayer[i]).ToString();
-        //    }
-        //    else
-        //    {
-        //        rowText[i].color = Color.green;
-        //        rowText[i].text = (scorePlayer[i] - scoreEnemy[i]).ToString();
-        //    }
-        //}
+        List<int> scorePlayer = boardPlayer.GetRowScore();
+        List<int> scoreEnemy = boardEnemy.GetRowScore();
+        for (int i = 0; i < scorePlayer.Count; i++)
+        {
+            if (scorePlayer[i] > scoreEnemy[i])
+            {
+                rowText[i].color = Color.green;
+                rowText[i].text = (scorePlayer[i] - scoreEnemy[i]).ToString();
+            }
+            else if (scorePlayer[i] < scoreEnemy[i])
+            {
+                rowText[i].color = Color.red;
+                rowText[i].text = (scoreEnemy[i] - scorePlayer[i]).ToString();
+            }
+            else
+            {
+                rowText[i].color = Color.blue;
+                rowText[i].text = (scorePlayer[i] - scoreEnemy[i]).ToString();
+            }
+        }
+    }
+
+    public List<int> GetAllScore()
+    {
+        List<int> scorePlayer = boardPlayer.GetRowScore();
+        List<int> scoreEnemy = boardEnemy.GetRowScore();
+        List<int> score = new List<int>();
+        for (int i = 0; i < scorePlayer.Count; i++)
+        {
+            score.Add(scorePlayer[i] - scoreEnemy[i]);
+        }
+        return score;
     }
 
     public void CleanScore()

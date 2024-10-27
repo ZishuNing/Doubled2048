@@ -5,7 +5,7 @@ using UnityEngine;
 public class TileBoardEnemy : MonoBehaviour
 {
     [SerializeField] private Tile tilePrefab;
-    [SerializeField] private TileState[] tileStates;
+    [SerializeField] private List<LevelConfig> levelConfigs;
     [SerializeField] private LevelConfig levelConfig;
 
     private TileGrid grid;
@@ -16,7 +16,7 @@ public class TileBoardEnemy : MonoBehaviour
         grid = GetComponentInChildren<TileGrid>();
         tiles = new List<Tile>(16);
         Events.Instance.OnGameStart += NewGame;
-        Events.Instance.OnBattleStart += StartBattle;
+        Events.Instance.OnLittleBattleStart += StartLittleBattle;
     }
 
     private void NewGame()
@@ -29,7 +29,7 @@ public class TileBoardEnemy : MonoBehaviour
         }
     }
 
-    private void StartBattle()
+    private void StartLittleBattle()
     {
         // 开始战斗，先把所有块向左移动
         MoveWithoutMerge(Vector2Int.left, 1, 1, 0, 1);
@@ -39,7 +39,7 @@ public class TileBoardEnemy : MonoBehaviour
     private void OnDestroy()
     {
         Events.Instance.OnGameStart -= NewGame;
-        Events.Instance.OnBattleStart -= StartBattle;
+        Events.Instance.OnLittleBattleStart -= StartLittleBattle;
     }
 
     public void ClearBoard()
@@ -51,7 +51,7 @@ public class TileBoardEnemy : MonoBehaviour
 
         foreach (var tile in tiles)
         {
-            Destroy(tile.gameObject);
+            if (tile != null) Destroy(tile.gameObject);
         }
 
         tiles.Clear();
@@ -118,7 +118,7 @@ public class TileBoardEnemy : MonoBehaviour
 
                 if (cell.Occupied)
                 {
-                    score += cell.tile.state.number;
+                    score += TilesManager.Instance.GetPowerOfTwo(cell.tile.state.number);
                 }
             }
 
@@ -127,10 +127,11 @@ public class TileBoardEnemy : MonoBehaviour
 
         return rowScore;
     }
+    
 
     IEnumerator WaitMoveAndRegisterDamage()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.15f);
         RegisterDamage();
     }
 
@@ -152,5 +153,11 @@ public class TileBoardEnemy : MonoBehaviour
                 }
             }
         }
+    }
+
+    //设置敌人关卡
+    public void SetLevel(int level)
+    {
+        levelConfig = levelConfigs[level];
     }
 }
