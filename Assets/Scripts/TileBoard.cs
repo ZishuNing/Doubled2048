@@ -202,7 +202,7 @@ public class TileBoard : MonoBehaviour
     {
         waiting = true;
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.15f);
 
         waiting = false;
 
@@ -215,8 +215,8 @@ public class TileBoard : MonoBehaviour
             CreateTile();
         }
 
-        //µÈÒ»Ö¡
-        yield return null;
+        //µÈ
+        yield return new WaitForSeconds(0.05f);
 
         if (tiles.Count != grid.Size)
         {
@@ -303,7 +303,7 @@ public class TileBoard : MonoBehaviour
                     Tile targetTile = BattleManager.Instance.FindNearestTargetTile(cell.coordinates, PlayerType.Player);
                     if (targetTile == null) continue;
                     int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Player);
-                    if (distance > cell.tile.state.attackRange) continue;
+                    if (distance > cell.tile.model.attackRange) continue;
                     BattleManager.Instance.RegisterDamage(targetTile, cell.tile.state.attack, PlayerType.Player);
                 }
             }

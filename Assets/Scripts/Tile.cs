@@ -9,6 +9,7 @@ public class Tile : MonoBehaviour
     public TileState state { get; private set; }
     public TileCell cell { get; private set; }
     public bool locked { get; set; }
+    public TileModel model { get; private set; }
 
     private Image background;
     private TextMeshProUGUI text;
@@ -17,15 +18,27 @@ public class Tile : MonoBehaviour
     {
         background = GetComponent<Image>();
         text = GetComponentInChildren<TextMeshProUGUI>();
+        model = GetComponent<TileModel>();
     }
 
     public void SetState(TileState state)
     {
         this.state = state;
+        SetRandomAttackRange(this);
 
-        background.color = state.backgroundColor;
+        if (model.attackRange > 1)
+            background.color = Color.yellow;
+        else
+            background.color = Color.gray;
+        //background.color = state.backgroundColor;
         text.color = state.textColor;
         text.text = state.number.ToString();
+    }
+
+    public void SetRandomAttackRange(Tile tile)
+    {
+        // 有0.7的概率攻击范围为1，0.3的概率攻击范围为3
+        tile.model.attackRange = UnityEngine.Random.Range(0, 10) < 7 ? 1 : 3;
     }
 
     public void Spawn(TileCell cell)

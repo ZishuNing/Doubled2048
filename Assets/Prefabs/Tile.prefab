@@ -31,7 +31,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4078548043748277474}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -147,6 +146,7 @@ GameObject:
   - component: {fileID: 4078548043748277500}
   - component: {fileID: 4078548043748277475}
   - component: {fileID: 7280697964493053281}
+  - component: {fileID: 9150654376577845863}
   m_Layer: 5
   m_Name: Tile
   m_TagString: Untagged
@@ -168,7 +168,6 @@ RectTransform:
   m_Children:
   - {fileID: 4078548043099007021}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -225,3 +224,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c762cfff6586145b66cc11d78050aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &9150654376577845863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4078548043748277473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bf44168bfadfd445a77acd8dfa1a158, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttackRange: 0

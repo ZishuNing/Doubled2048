@@ -42,6 +42,13 @@ public class TileBoardEnemy : MonoBehaviour
 
     private void BattleEnd()
     {
+        // 要等是因为BattleManager在计算伤害
+        StartCoroutine(GenerateNewLevel());
+    }
+
+    IEnumerator GenerateNewLevel()
+    {
+        yield return new WaitForSeconds(0.05f);
         CurrentLevel++;
         levelConfig = levelConfigs[CurrentLevel % levelConfigs.Count];
 
@@ -164,7 +171,7 @@ public class TileBoardEnemy : MonoBehaviour
                     Tile targetTile = BattleManager.Instance.FindNearestTargetTile(cell.coordinates, PlayerType.Enemy);
                     if (targetTile == null) continue;
                     int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Enemy);
-                    if (distance > cell.tile.state.attackRange) continue;
+                    if (distance > cell.tile.model.attackRange) continue;
                     BattleManager.Instance.RegisterDamage(targetTile, cell.tile.state.attack, PlayerType.Enemy);
                 }
             }

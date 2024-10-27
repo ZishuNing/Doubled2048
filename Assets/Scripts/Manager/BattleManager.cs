@@ -22,10 +22,17 @@ public class BattleManager : Singleton<BattleManager>
     {
         Events.Instance.OnLittleBattleEnd += EndLittleBattle;
         Events.Instance.OnBattleEnd += EndBattle;
+        Events.Instance.OnGameStart += NewGame;
 
         // 测试用生命值
-        PlayerHP.text = playerHP.ToString();
-        EnemyHP.text = enemyHP.ToString();
+        UpdateHPUI();
+    }
+
+    private void NewGame()
+    {
+        playerHP = 10;
+        enemyHP = 10;
+        UpdateHPUI();
     }
 
     private void EndLittleBattle()
@@ -43,10 +50,9 @@ public class BattleManager : Singleton<BattleManager>
 
     private void EndBattle()
     {
-        DealDamageToPlayers();
+        DealDamageToHero();
         // 测试用生命值
-        PlayerHP.text = playerHP.ToString();
-        EnemyHP.text = enemyHP.ToString();
+        UpdateHPUI();
     }
 
     protected override void OnDestroy()
@@ -100,7 +106,7 @@ public class BattleManager : Singleton<BattleManager>
         }
     }
 
-    public void DealDamageToTile()
+    private void DealDamageToTile()
     {
         foreach (var tileDamage in damageDocument)
         {
@@ -118,25 +124,44 @@ public class BattleManager : Singleton<BattleManager>
         damageDocument.Clear();
     }
 
-    public void DealDamageToPlayers()
+    private void DealDamageToHero()
     {
-        List<int> damage = ScoreManager.Instance.GetAllScore();
-        foreach (var d in damage)
+        int playerDamage = GetAllDamage(gridPlayer);
+        int enemyDamage = GetAllDamage(gridEnemy);
+        enemyHP -= playerDamage;
+        playerHP -= enemyDamage;
+    }
+
+    private int GetAllDamage(TileGrid tileGrid)
+    {
+        int height = tileGrid.Height;
+        int width = tileGrid.Width;
+        int totalDamage = 0;
+        for (int y = 0; y < height; y++)
         {
-            if (d > 0)
+            int damage = 0;
+            for (int x = 0; x < width; x++)
             {
-                enemyHP -= d;
+                TileCell cell = tileGrid.GetCell(x, y);
+                if (cell.Occupied)
+                {
+                    damage += TilesManager.Instance.GetPowerOfTwo(cell.tile.state.number);
+                }
             }
-            else if (d < 0)
-            {
-                playerHP += d;
-            }
+            totalDamage += damage;
         }
+        return totalDamage;
     }
 
     //如果没有任何注册的伤害，则战斗结束
-    public bool CheckIsBattleDone()
+    private bool CheckIsBattleDone()
     {
        return damageDocument.Count == 0;
+    }
+
+    private void UpdateHPUI()
+    {
+        PlayerHP.text = playerHP.ToString();
+        EnemyHP.text = enemyHP.ToString();
     }
 }

@@ -8,5 +8,5 @@ public class TileState : ScriptableObject
     public Color textColor;
 
     public int attack = 1;
-    public int attackRange = 1;
+    //public int attackRange = 1;
 }
