@@ -83,8 +83,8 @@ public class TileBoardEnemy : MonoBehaviour
     public void CreateSpecificTile(TileState tileState)
     {
         Tile tile = Instantiate(tilePrefab, grid.transform);
-        tile.SetState(tileState);
         tile.Spawn(grid.GetRandomEmptyCell());
+        tile.SetState(tileState);
         tiles.Add(tile);
     }
 

@@ -92,8 +92,8 @@ public class TileBoard : MonoBehaviour
     public void CreateTile()
     {
         Tile tile = Instantiate(tilePrefab, grid.transform);
-        tile.SetState(TilesManager.Instance.GetTileState(0));
         tile.Spawn(grid.GetRandomEmptyCell());
+        tile.SetState(TilesManager.Instance.GetTileState(0));
         tiles.Add(tile);
     }
 
@@ -184,7 +184,7 @@ public class TileBoard : MonoBehaviour
 
     private bool CanMerge(Tile a, Tile b)
     {
-        return a.state == b.state && !b.locked;
+        return a.state == b.state && !b.locked && a.model.attackRange == b.model.attackRange;
     }
 
     private void MergeTiles(Tile a, Tile b)

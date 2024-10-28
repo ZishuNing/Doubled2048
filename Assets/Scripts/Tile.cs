@@ -24,7 +24,6 @@ public class Tile : MonoBehaviour
     public void SetState(TileState state)
     {
         this.state = state;
-        SetRandomAttackRange(this);
 
         if (model.attackRange > 1)
             background.color = Color.yellow;
@@ -33,12 +32,6 @@ public class Tile : MonoBehaviour
         //background.color = state.backgroundColor;
         text.color = state.textColor;
         text.text = state.number.ToString();
-    }
-
-    public void SetRandomAttackRange(Tile tile)
-    {
-        // 有0.7的概率攻击范围为1，0.3的概率攻击范围为3
-        tile.model.attackRange = UnityEngine.Random.Range(0, 10) < 7 ? 1 : 3;
     }
 
     public void Spawn(TileCell cell)
@@ -51,6 +44,13 @@ public class Tile : MonoBehaviour
         this.cell.tile = this;
 
         transform.position = cell.transform.position;
+        SetRandomAttackRange(this);
+    }
+
+    public void SetRandomAttackRange(Tile tile)
+    {
+        // 有0.7的概率攻击范围为1，0.3的概率攻击范围为3
+        tile.model.attackRange = UnityEngine.Random.Range(0, 10) < 7 ? 1 : 3;
     }
 
     public void MoveTo(TileCell cell)
