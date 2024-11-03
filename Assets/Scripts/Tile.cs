@@ -11,13 +11,13 @@ public class Tile : MonoBehaviour
     public bool locked { get; set; }
     public TileModel model { get; private set; }
 
-    private Image background;
-    private TextMeshProUGUI text;
+    private Image avatar;
+    private Image HPbar;
 
     private void Awake()
     {
-        background = GetComponent<Image>();
-        text = GetComponentInChildren<TextMeshProUGUI>();
+        avatar = GetComponent<Image>();
+        HPbar = transform.Find("HPbar").GetComponent<Image>();
         model = GetComponent<TileModel>();
     }
 
@@ -138,14 +138,8 @@ public class Tile : MonoBehaviour
 
     private void RefreshUI()
     {
-        text.text = model.CurHealth.ToString();
-        if(model.state.unitType == (int)UnitType.Melee)
-        {
-            background.color = Color.gray;
-        } else if (model.state.unitType == (int)UnitType.Ranged)
-        {
-            background.color = Color.black;
-        }
+        HPbar.fillAmount = (float)model.CurHealth / model.GetMaxHealth();
+        avatar.sprite = TilesManager.Instance.GetSprite(model.state.unitType, model.CurLevel);
     }
 
 }

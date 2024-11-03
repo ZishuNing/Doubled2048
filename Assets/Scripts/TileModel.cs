@@ -76,4 +76,9 @@ public class TileModel : MonoBehaviour
     {
         CurHealth = state.baseHealth + (CurLevel - 1) * state.upgradeHealth;
     }
+
+    public int GetMaxHealth()
+    {
+        return state.baseHealth + (CurLevel - 1) * state.upgradeHealth;
+    }
 }

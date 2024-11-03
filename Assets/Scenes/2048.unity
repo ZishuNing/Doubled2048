@@ -4490,8 +4490,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddfc298e20b4a0045b8175c868e7ccdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileMeleeStates: {fileID: 11400000, guid: 6d441fcb5e415674fb319bdc9b111662, type: 2}
-  tileRangedStates: {fileID: 11400000, guid: 00ca6ed53f359da4bba0bce302446492, type: 2}
+  tileMeleeSprites:
+  - {fileID: 1498738977, guid: 35fbb8bc334748840a7ad0baddd6b11b, type: 3}
+  - {fileID: -1692486325, guid: 35fbb8bc334748840a7ad0baddd6b11b, type: 3}
+  - {fileID: -1368657808, guid: 35fbb8bc334748840a7ad0baddd6b11b, type: 3}
+  - {fileID: 1045192884, guid: 35fbb8bc334748840a7ad0baddd6b11b, type: 3}
+  - {fileID: -1945762801, guid: 35fbb8bc334748840a7ad0baddd6b11b, type: 3}
+  - {fileID: -2117407696, guid: 35fbb8bc334748840a7ad0baddd6b11b, type: 3}
+  tileRangedSprites:
+  - {fileID: -1488183807, guid: 4d2fe17fbac4c5f46958901f34dcaf87, type: 3}
+  - {fileID: 1974417474, guid: 4d2fe17fbac4c5f46958901f34dcaf87, type: 3}
+  - {fileID: 412673817, guid: 4d2fe17fbac4c5f46958901f34dcaf87, type: 3}
+  - {fileID: 1496219300, guid: 4d2fe17fbac4c5f46958901f34dcaf87, type: 3}
+  - {fileID: -491643673, guid: 4d2fe17fbac4c5f46958901f34dcaf87, type: 3}
+  - {fileID: -64555394, guid: 4d2fe17fbac4c5f46958901f34dcaf87, type: 3}
 --- !u!1 &1631520624
 GameObject:
   m_ObjectHideFlags: 0
