@@ -11,8 +11,10 @@ public class BattleManager : Singleton<BattleManager>
     // 测试用生命值
     [SerializeField] private TextMeshProUGUI PlayerHP;
     [SerializeField] private TextMeshProUGUI EnemyHP;
-    private int playerHP = 10;
-    private int enemyHP = 10;
+    [SerializeField] private CharacterConfig playerConfig;
+    [SerializeField] private CharacterConfig enemyConfig;
+    private int playerHP;
+    private int enemyHP;
 
 
     // Document the damage dealt to each tile
@@ -25,6 +27,8 @@ public class BattleManager : Singleton<BattleManager>
         Events.Instance.OnGameStart += NewGame;
 
         // 测试用生命值
+        playerHP = playerConfig.baseHealth;
+        enemyHP = enemyConfig.baseHealth;
         UpdateHPUI();
     }
 
