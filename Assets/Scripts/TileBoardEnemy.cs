@@ -83,9 +83,7 @@ public class TileBoardEnemy : MonoBehaviour
     public void CreateSpecificTile(int tileLevel)
     {
         Tile tile = Instantiate(tilePrefab, grid.transform);
-        tile.Spawn(grid.GetRandomEmptyCell());
-        tile.SetState(TilesManager.Instance.GetRandomInitState());
-        tile.model.CurLevel = tileLevel;
+        tile.Spawn(grid.GetRandomEmptyCell(), tileLevel);
         tiles.Add(tile);
     }
 

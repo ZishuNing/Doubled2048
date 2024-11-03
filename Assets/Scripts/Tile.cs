@@ -24,7 +24,16 @@ public class Tile : MonoBehaviour
     private void Start()
     {
         Events.Instance.OnTileDead += OnTileDead;
+        Events.Instance.OnTileTakeDamage += OnTileTakeDamage;
         Events.Instance.OnTileLevelChange += OnTileLevelChange;
+    }
+
+    private void OnTileTakeDamage(TileModel model)
+    {
+        if (model == this.model)
+        {
+            RefreshUI();
+        }
     }
 
     private void OnTileLevelChange(TileModel model)
@@ -43,13 +52,7 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void SetState(TileState state)
-    {
-        this.model.state = state;
-        RefreshUI();
-    }
-
-    public void Spawn(TileCell cell)
+    public void Spawn(TileCell cell, int tileLevel=1)
     {
         if (this.cell != null) {
             this.cell.tile = null;
@@ -59,6 +62,9 @@ public class Tile : MonoBehaviour
         this.cell.tile = this;
 
         transform.position = cell.transform.position;
+        this.model.state = TilesManager.Instance.GetRandomInitState();
+        this.model.CurLevel = tileLevel;
+        RefreshUI();
     }
 
     public void MoveTo(TileCell cell)
@@ -125,7 +131,7 @@ public class Tile : MonoBehaviour
 
     private void RefreshUI()
     {
-        text.text = model.CurLevel.ToString();
+        text.text = model.CurHealth.ToString();
         if(model.state.unitType == (int)UnitType.Melee)
         {
             background.color = Color.gray;

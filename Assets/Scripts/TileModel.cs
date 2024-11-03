@@ -47,6 +47,10 @@ public class TileModel : MonoBehaviour
         {
             Events.Instance.TileDead(this);
         }
+        else
+        {
+            Events.Instance.TileTakeDamage(this);
+        }
     }
 
     public void Upgrade()

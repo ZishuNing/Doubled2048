@@ -20,6 +20,8 @@ public class Events : MonoBehaviour
 
     //Tile死亡事件
     public event Action<TileModel> OnTileDead;
+    //Tile受伤事件
+    public event Action<TileModel> OnTileTakeDamage;
     //Tile升级事件
     public event Action<TileModel> OnTileLevelChange;
 
@@ -76,6 +78,11 @@ public class Events : MonoBehaviour
     public void TileDead(TileModel tile)
     {
         OnTileDead?.Invoke(tile);
+    }
+
+    public void TileTakeDamage(TileModel tile)
+    {
+        OnTileTakeDamage?.Invoke(tile);
     }
 
     public void TileLevelChange(TileModel tile)
