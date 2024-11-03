@@ -73,7 +73,7 @@ public class BattleManager : Singleton<BattleManager>
         {
             TileCell cell = tileGrid.GetCell(startX, myY);
             startX += playerType == PlayerType.Player ? 1 : -1;
-            if (cell.Occupied && cell.tile.state.number > 1)
+            if (cell.Occupied && cell.tile.model.CurHealth > 0)
             {
                 nearestEnemy = cell.tile;
                 break;
@@ -110,16 +110,8 @@ public class BattleManager : Singleton<BattleManager>
     {
         foreach (var tileDamage in damageDocument)
         {
-            int index = TilesManager.Instance.IndexOfTileStates(tileDamage.Key.state);
-            index -= tileDamage.Value;
-            if (index < 0)
-            {
-                tileDamage.Key.DestroyTile();
-            }
-            else
-            {
-                tileDamage.Key.SetState(TilesManager.Instance.GetTileState(index));
-            }
+            TileModel tileModel = tileDamage.Key.model;
+            tileModel.TakeDamage(tileDamage.Value);
         }
         damageDocument.Clear();
     }
@@ -145,7 +137,7 @@ public class BattleManager : Singleton<BattleManager>
                 TileCell cell = tileGrid.GetCell(x, y);
                 if (cell.Occupied)
                 {
-                    damage += TilesManager.Instance.GetPowerOfTwo(cell.tile.state.number);
+                    damage += cell.tile.model.CurAttackToPlayer;
                 }
             }
             totalDamage += damage;

@@ -93,12 +93,13 @@ public class TileBoard : MonoBehaviour
     {
         Tile tile = Instantiate(tilePrefab, grid.transform);
         tile.Spawn(grid.GetRandomEmptyCell());
-        tile.SetState(TilesManager.Instance.GetTileState(0));
+        tile.SetState(TilesManager.Instance.GetRandomInitState());
         tiles.Add(tile);
     }
 
     private void Move(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
     {
+        bool changed = false;
         for (int x = startX; x >= 0 && x < grid.Width; x += incrementX)
         {
             for (int y = startY; y >= 0 && y < grid.Height; y += incrementY)
@@ -106,11 +107,13 @@ public class TileBoard : MonoBehaviour
                 TileCell cell = grid.GetCell(x, y);
 
                 if (cell.Occupied) {
-                    MoveTile(cell.tile, direction);
+                    changed |= MoveTile(cell.tile, direction);
                 }
             }
         }
-        StartCoroutine(WaitForMove());
+
+        if (changed)
+            StartCoroutine(WaitForMove());
     }
 
     private void MoveWithoutMerge(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
@@ -184,18 +187,14 @@ public class TileBoard : MonoBehaviour
 
     private bool CanMerge(Tile a, Tile b)
     {
-        return a.state == b.state && !b.locked && a.model.attackRange == b.model.attackRange;
+        return a.state == b.state && !b.locked && a.state.unitType == b.state.unitType;
     }
 
     private void MergeTiles(Tile a, Tile b)
     {
         tiles.Remove(a);
         a.Merge(b.cell);
-
-        int index = Mathf.Clamp(TilesManager.Instance.IndexOfTileStates(b.state) + 1, 0, TilesManager.Instance.GetTileStatesLength() - 1);
-        TileState newState = TilesManager.Instance.GetTileState(index);
-
-        b.SetState(newState);
+        b.Upgrade();
     }
 
     private IEnumerator WaitForMove()
@@ -261,24 +260,24 @@ public class TileBoard : MonoBehaviour
     // 获取每一行的分数
     public List<int> GetRowScore()
     {
-        List<int> rowScore = new List<int>();
+        List<int> rowScore = new List<int>(4);
 
-        for (int y = 0; y < grid.Height; y++)
-        {
-            int score = 0;
+        //for (int y = 0; y < grid.Height; y++)
+        //{
+        //    int score = 0;
 
-            for (int x = 0; x < grid.Width; x++)
-            {
-                TileCell cell = grid.GetCell(x, y);
+        //    for (int x = 0; x < grid.Width; x++)
+        //    {
+        //        TileCell cell = grid.GetCell(x, y);
 
-                if (cell.Occupied)
-                {
-                    score += TilesManager.Instance.GetPowerOfTwo(cell.tile.state.number); ;
-                }
-            }
+        //        if (cell.Occupied)
+        //        {
+        //            score += TilesManager.Instance.GetPowerOfTwo(cell.tile.state.number); ;
+        //        }
+        //    }
 
-            rowScore.Add(score);
-        }
+        //    rowScore.Add(score);
+        //}
 
         return rowScore;
     }
@@ -297,14 +296,14 @@ public class TileBoard : MonoBehaviour
             for (int x = 0; x < grid.Width; x++)
             {
                 TileCell cell = grid.GetCell(x, y);
-                if (cell.Occupied && cell.tile.state.number > 1)
+                if (cell.Occupied && cell.tile.model.CurAttack>0)
                 {
                     //Debug.Log("Register Damage: " + cell.coordinates + ", Damage: " + cell.tile.state.attack);
                     Tile targetTile = BattleManager.Instance.FindNearestTargetTile(cell.coordinates, PlayerType.Player);
                     if (targetTile == null) continue;
                     int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Player);
-                    if (distance > cell.tile.model.attackRange) continue;
-                    BattleManager.Instance.RegisterDamage(targetTile, cell.tile.state.attack, PlayerType.Player);
+                    if (distance > cell.tile.model.CurAttackRange) continue;
+                    BattleManager.Instance.RegisterDamage(targetTile, cell.tile.model.CurAttack, PlayerType.Player);
                 }
             }
         }

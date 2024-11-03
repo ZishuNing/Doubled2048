@@ -3,10 +3,11 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "SO/Tile State")]
 public class TileState : ScriptableObject
 {
-    public int number;
-    public Color backgroundColor;
-    public Color textColor;
-
-    public int attack = 1;
-    //public int attackRange = 1;
+    public int baseAttack;
+    public int baseHealth;
+    public int baseAttackRange;
+    public int upgradeAttack;
+    public int upgradeHealth;
+    public int unitType;
+    public int maxLevel=6;
 }

@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6da7eb619f13b9e438623a1594a8013d, type: 3}
-  m_Name: 16
+  m_Name: Melee
   m_EditorClassIdentifier: 
-  number: 16
-  backgroundColor: {r: 0.38431373, g: 0.63529414, b: 0.87058824, a: 1}
-  textColor: {r: 0.4056604, g: 0.4056604, b: 0.4056604, a: 1}
-  attack: 1
-  attackRange: 2
+  baseAttack: 3
+  baseHealth: 10
+  baseAttackRange: 1
+  upgradeAttack: 1
+  upgradeHealth: 4
+  unitType: 0
+  maxLevel: 6

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Tile : MonoBehaviour
 {
-    public TileState state { get; private set; }
+    public TileState state{get { return model.state; }}
     public TileCell cell { get; private set; }
     public bool locked { get; set; }
     public TileModel model { get; private set; }
@@ -21,17 +21,32 @@ public class Tile : MonoBehaviour
         model = GetComponent<TileModel>();
     }
 
+    private void Start()
+    {
+        Events.Instance.OnTileDead += OnTileDead;
+        Events.Instance.OnTileLevelChange += OnTileLevelChange;
+    }
+
+    private void OnTileLevelChange(TileModel model)
+    {
+        if (model == this.model)
+        {
+            RefreshUI();
+        }
+    }
+
+    private void OnTileDead(TileModel model)
+    {
+        if (model == this.model)
+        {
+            DestroyTile();
+        }
+    }
+
     public void SetState(TileState state)
     {
-        this.state = state;
-
-        if (model.attackRange > 1)
-            background.color = Color.yellow;
-        else
-            background.color = Color.gray;
-        //background.color = state.backgroundColor;
-        text.color = state.textColor;
-        text.text = state.number.ToString();
+        this.model.state = state;
+        RefreshUI();
     }
 
     public void Spawn(TileCell cell)
@@ -44,13 +59,6 @@ public class Tile : MonoBehaviour
         this.cell.tile = this;
 
         transform.position = cell.transform.position;
-        SetRandomAttackRange(this);
-    }
-
-    public void SetRandomAttackRange(Tile tile)
-    {
-        // 有0.7的概率攻击范围为1，0.3的概率攻击范围为3
-        tile.model.attackRange = UnityEngine.Random.Range(0, 10) < 7 ? 1 : 3;
     }
 
     public void MoveTo(TileCell cell)
@@ -75,6 +83,12 @@ public class Tile : MonoBehaviour
         cell.tile.locked = true;
 
         StartCoroutine(Animate(cell.transform.position, true));
+    }
+
+    public void Upgrade()
+    {
+        model.Upgrade();
+        RefreshUI();
     }
 
     public void DestroyTile()
@@ -106,6 +120,18 @@ public class Tile : MonoBehaviour
 
         if (merging) {
             Destroy(gameObject);
+        }
+    }
+
+    private void RefreshUI()
+    {
+        text.text = model.CurLevel.ToString();
+        if(model.state.unitType == (int)UnitType.Melee)
+        {
+            background.color = Color.gray;
+        } else if (model.state.unitType == (int)UnitType.Ranged)
+        {
+            background.color = Color.black;
         }
     }
 

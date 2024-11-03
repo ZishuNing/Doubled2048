@@ -18,6 +18,11 @@ public class Events : MonoBehaviour
     public event Action OnLittleBattleEnd;
     public event Action OnBattleEnd;
 
+    //Tile死亡事件
+    public event Action<TileModel> OnTileDead;
+    //Tile升级事件
+    public event Action<TileModel> OnTileLevelChange;
+
     private void Awake()
     {
         if (Instance != null)
@@ -66,5 +71,15 @@ public class Events : MonoBehaviour
     public void BattleEnd()
     {
         OnBattleEnd?.Invoke();
+    }
+
+    public void TileDead(TileModel tile)
+    {
+        OnTileDead?.Invoke(tile);
+    }
+
+    public void TileLevelChange(TileModel tile)
+    {
+        OnTileLevelChange?.Invoke(tile);
     }
 }

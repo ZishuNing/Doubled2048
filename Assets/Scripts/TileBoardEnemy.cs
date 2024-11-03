@@ -9,7 +9,7 @@ public class TileBoardEnemy : MonoBehaviour
     [SerializeField] private List<LevelConfig> levelConfigs;
 
     private LevelConfig levelConfig;
-    private int CurrentLevel=0;
+    private int CurrentRound=0;
     private TileGrid grid;
     private List<Tile> tiles;
 
@@ -26,10 +26,10 @@ public class TileBoardEnemy : MonoBehaviour
     {
         // update board state
         this.ClearBoard();
-        CurrentLevel = 0;
-        foreach (var tile in levelConfigs[CurrentLevel].tiles)
+        CurrentRound = 0;
+        foreach (int tileLevel in levelConfigs[CurrentRound].tilesLevel)
         {
-            this.CreateSpecificTile(tile);
+            this.CreateSpecificTile(tileLevel);
         }
     }
 
@@ -49,12 +49,12 @@ public class TileBoardEnemy : MonoBehaviour
     IEnumerator GenerateNewLevel()
     {
         yield return new WaitForSeconds(0.05f);
-        CurrentLevel++;
-        levelConfig = levelConfigs[CurrentLevel % levelConfigs.Count];
+        CurrentRound++;
+        levelConfig = levelConfigs[CurrentRound % levelConfigs.Count];
 
-        foreach (var tile in levelConfig.tiles)
+        foreach (int tileLevel in levelConfig.tilesLevel)
         {
-            this.CreateSpecificTile(tile);
+            this.CreateSpecificTile(tileLevel);
         }
     }
 
@@ -80,11 +80,12 @@ public class TileBoardEnemy : MonoBehaviour
         tiles.Clear();
     }
 
-    public void CreateSpecificTile(TileState tileState)
+    public void CreateSpecificTile(int tileLevel)
     {
         Tile tile = Instantiate(tilePrefab, grid.transform);
         tile.Spawn(grid.GetRandomEmptyCell());
-        tile.SetState(tileState);
+        tile.SetState(TilesManager.Instance.GetRandomInitState());
+        tile.model.CurLevel = tileLevel;
         tiles.Add(tile);
     }
 
@@ -129,24 +130,24 @@ public class TileBoardEnemy : MonoBehaviour
     // 获取每一行的分数
     public List<int> GetRowScore()
     {
-        List<int> rowScore = new List<int>();
+        List<int> rowScore = new List<int>(4);
 
-        for (int y = 0; y < grid.Height; y++)
-        {
-            int score = 0;
+        //for (int y = 0; y < grid.Height; y++)
+        //{
+        //    int score = 0;
 
-            for (int x = 0; x < grid.Width; x++)
-            {
-                TileCell cell = grid.GetCell(x, y);
+        //    for (int x = 0; x < grid.Width; x++)
+        //    {
+        //        TileCell cell = grid.GetCell(x, y);
 
-                if (cell.Occupied)
-                {
-                    score += TilesManager.Instance.GetPowerOfTwo(cell.tile.state.number);
-                }
-            }
+        //        if (cell.Occupied)
+        //        {
+        //            score += TilesManager.Instance.GetPowerOfTwo(cell.tile.state.number);
+        //        }
+        //    }
 
-            rowScore.Add(score);
-        }
+        //    rowScore.Add(score);
+        //}
 
         return rowScore;
     }
@@ -166,13 +167,13 @@ public class TileBoardEnemy : MonoBehaviour
             for (int x = 0; x < grid.Width; x++)
             {
                 TileCell cell = grid.GetCell(x, y);
-                if (cell.Occupied && cell.tile.state.number > 1)
+                if (cell.Occupied && cell.tile.model.CurAttack > 1)
                 {
                     Tile targetTile = BattleManager.Instance.FindNearestTargetTile(cell.coordinates, PlayerType.Enemy);
                     if (targetTile == null) continue;
                     int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Enemy);
-                    if (distance > cell.tile.model.attackRange) continue;
-                    BattleManager.Instance.RegisterDamage(targetTile, cell.tile.state.attack, PlayerType.Enemy);
+                    if (distance > cell.tile.model.CurAttackRange) continue;
+                    BattleManager.Instance.RegisterDamage(targetTile, cell.tile.model.CurAttack, PlayerType.Enemy);
                 }
             }
         }
