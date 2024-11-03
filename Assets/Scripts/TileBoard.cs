@@ -19,6 +19,21 @@ public class TileBoard : MonoBehaviour
         Events.Instance.OnBattleStart += StartBattle;
         Events.Instance.OnLittleBattleStart += StartLittleBattle;
         Events.Instance.OnBattleEnd += EndBattle;
+        Events.Instance.OnTileDead += OnTileDead;
+    }
+
+    private void OnDestroy()
+    {
+        Events.Instance.OnGameStart -= NewGame;
+        Events.Instance.OnBattleStart -= StartBattle;
+        Events.Instance.OnLittleBattleStart -= StartLittleBattle;
+        Events.Instance.OnBattleEnd -= EndBattle;
+        Events.Instance.OnTileDead -= OnTileDead;
+    }
+
+    private void OnTileDead(TileModel model)
+    {
+        tiles.RemoveAll(tile => tile.model == model);
     }
 
     private void NewGame()
@@ -44,14 +59,6 @@ public class TileBoard : MonoBehaviour
     private void EndBattle()
     {
         waiting = false;
-    }
-
-    private void OnDestroy()
-    {
-        Events.Instance.OnGameStart -= NewGame;
-        Events.Instance.OnBattleStart -= StartBattle;
-        Events.Instance.OnLittleBattleStart -= StartLittleBattle;
-        Events.Instance.OnBattleEnd -= EndBattle;
     }
 
     private void Update()
@@ -208,6 +215,7 @@ public class TileBoard : MonoBehaviour
             tile.locked = false;
         }
 
+        Debug.Log("tiles.Count: " + tiles.Count + "grid.size: " + grid.Size);
         if (tiles.Count != grid.Size)
         {
             CreateTile();

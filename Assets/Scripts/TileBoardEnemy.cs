@@ -20,6 +20,20 @@ public class TileBoardEnemy : MonoBehaviour
         Events.Instance.OnGameStart += NewGame;
         Events.Instance.OnLittleBattleStart += StartLittleBattle;
         Events.Instance.OnBattleEnd += BattleEnd;
+        Events.Instance.OnTileDead += OnTileDead;
+    }
+
+    private void OnDestroy()
+    {
+        Events.Instance.OnGameStart -= NewGame;
+        Events.Instance.OnLittleBattleStart -= StartLittleBattle;
+        Events.Instance.OnBattleEnd -= BattleEnd;
+        Events.Instance.OnTileDead -= OnTileDead;
+    }
+
+    private void OnTileDead(TileModel model)
+    {
+        tiles.RemoveAll(tile => tile.model == model);
     }
 
     private void NewGame()
@@ -56,13 +70,6 @@ public class TileBoardEnemy : MonoBehaviour
         {
             this.CreateSpecificTile(tileLevel);
         }
-    }
-
-    private void OnDestroy()
-    {
-        Events.Instance.OnGameStart -= NewGame;
-        Events.Instance.OnLittleBattleStart -= StartLittleBattle;
-        Events.Instance.OnBattleEnd -= BattleEnd;
     }
 
     public void ClearBoard()
