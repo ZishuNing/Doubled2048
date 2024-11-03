@@ -64,4 +64,14 @@ public class TileGrid : MonoBehaviour
         return cells[index];
     }
 
+    public void RecoverTilesState()
+    {
+        foreach (var cell in cells)
+        {
+            if (cell.Occupied)
+            {
+                cell.tile.model.Recover();
+            }
+        }
+    }
 }

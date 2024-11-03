@@ -19,7 +19,23 @@ public class TileModel : MonoBehaviour
     }
     private TileState _state;
 
-    public int CurHealth { get; private set; }
+    public int CurHealth {
+        get { return _curHealth; }
+        set
+        {
+            _curHealth = value;
+            if(_curHealth <= 0)
+            {
+                Events.Instance.TileDead(this);
+            }
+            else
+            {
+                Events.Instance.TileHPChange(this);
+            }
+        }
+    }
+    private int _curHealth;
+
     public int CurAttack{ get; private set; }
     public int CurLevel { 
         get { return _curLevel; } 
@@ -43,14 +59,6 @@ public class TileModel : MonoBehaviour
     public void TakeDamage(int value)
     {
         CurHealth -= value;
-        if (CurHealth <= 0)
-        {
-            Events.Instance.TileDead(this);
-        }
-        else
-        {
-            Events.Instance.TileTakeDamage(this);
-        }
     }
 
     public void Upgrade()
@@ -62,5 +70,10 @@ public class TileModel : MonoBehaviour
         CurHealth += state.upgradeHealth;
         CurAttack += state.upgradeAttack;
         CurLevel++;
+    }
+
+    public void Recover()
+    {
+        CurHealth = state.baseHealth + (CurLevel - 1) * state.upgradeHealth;
     }
 }

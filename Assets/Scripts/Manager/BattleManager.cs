@@ -28,6 +28,14 @@ public class BattleManager : Singleton<BattleManager>
         UpdateHPUI();
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        Events.Instance.OnBattleEnd -= EndLittleBattle;
+        Events.Instance.OnBattleEnd -= EndBattle;
+        Events.Instance.OnGameStart -= NewGame;
+    }
+
     private void NewGame()
     {
         playerHP = 10;
@@ -53,13 +61,14 @@ public class BattleManager : Singleton<BattleManager>
         DealDamageToHero();
         // 测试用生命值
         UpdateHPUI();
+        // 棋子在对战中未死亡，则恢复满状态
+        RecoverAllTilesState();
     }
 
-    protected override void OnDestroy()
+    private void RecoverAllTilesState()
     {
-        base.OnDestroy();
-        Events.Instance.OnBattleEnd -= EndLittleBattle;
-        Events.Instance.OnBattleEnd -= EndBattle;
+        gridEnemy.RecoverTilesState();
+        gridPlayer.RecoverTilesState();
     }
 
     public Tile FindNearestTargetTile(Vector2Int myCoordinate, PlayerType playerType)

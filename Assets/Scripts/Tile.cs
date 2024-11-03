@@ -24,11 +24,18 @@ public class Tile : MonoBehaviour
     private void Start()
     {
         Events.Instance.OnTileDead += OnTileDead;
-        Events.Instance.OnTileTakeDamage += OnTileTakeDamage;
+        Events.Instance.OnTileHPChange += OnTileHPChange;
         Events.Instance.OnTileLevelChange += OnTileLevelChange;
     }
 
-    private void OnTileTakeDamage(TileModel model)
+    private void OnDestroy()
+    {
+        Events.Instance.OnTileDead -= OnTileDead;
+        Events.Instance.OnTileHPChange -= OnTileHPChange;
+        Events.Instance.OnTileLevelChange -= OnTileLevelChange;
+    }
+
+    private void OnTileHPChange(TileModel model)
     {
         if (model == this.model)
         {
