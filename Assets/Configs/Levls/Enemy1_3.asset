@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b09abed01155024c907fa3ccb85550a, type: 3}
   m_Name: Enemy1_3
   m_EditorClassIdentifier: 
-  tilesLevel: 0400000004000000030000000200000002000000
+  tilesLevel: 0400000004000000030000000100000001000000
