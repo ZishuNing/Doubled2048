@@ -310,7 +310,7 @@ public class TileBoard : MonoBehaviour
                     if (targetTile == null) continue;
                     int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Player);
                     if (distance > cell.tile.model.CurAttackRange) continue;
-                    BattleManager.Instance.RegisterDamage(targetTile, cell.tile.model.CurAttack, PlayerType.Player);
+                    BattleManager.Instance.RegisterDamage(cell.tile, targetTile, cell.tile.model.CurAttack, cell.tile.state.unitType);
                 }
             }
         }

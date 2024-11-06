@@ -4506,6 +4506,9 @@ MonoBehaviour:
   - {fileID: 412673817, guid: 4d2fe17fbac4c5f46958901f34dcaf87, type: 3}
   - {fileID: 1974417474, guid: 4d2fe17fbac4c5f46958901f34dcaf87, type: 3}
   - {fileID: -1488183807, guid: 4d2fe17fbac4c5f46958901f34dcaf87, type: 3}
+  AxeEffect: {fileID: 0}
+  BowEffect: {fileID: 0}
+  BowLandingEffect: {fileID: 0}
 --- !u!1 &1631520624
 GameObject:
   m_ObjectHideFlags: 0

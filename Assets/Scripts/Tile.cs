@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UI;
 
 public class Tile : MonoBehaviour
@@ -26,6 +27,7 @@ public class Tile : MonoBehaviour
         Events.Instance.OnTileDead += OnTileDead;
         Events.Instance.OnTileHPChange += OnTileHPChange;
         Events.Instance.OnTileLevelChange += OnTileLevelChange;
+        Events.Instance.OnTileAttack += OnTileAttack;
     }
 
     private void OnDestroy()
@@ -33,6 +35,55 @@ public class Tile : MonoBehaviour
         Events.Instance.OnTileDead -= OnTileDead;
         Events.Instance.OnTileHPChange -= OnTileHPChange;
         Events.Instance.OnTileLevelChange -= OnTileLevelChange;
+        Events.Instance.OnTileAttack -= OnTileAttack;
+    }
+
+    private void OnTileAttack(TileDamage damage)
+    {
+        if(damage.Attacker == this)
+        {
+            switch (damage.AttackerUnitType)
+            {
+                case (int)UnitType.Melee:
+                    GameObject instantiatedAxe = TilesManager.Instance.AxeEffectPool.Get();
+                    instantiatedAxe.transform.SetParent(transform);
+                    instantiatedAxe.transform.localPosition = new Vector3(0, -19, 0);
+                    instantiatedAxe.transform.localScale = Vector3.one;
+                    StartCoroutine(ReleaseEffectAfterTime(instantiatedAxe, TilesManager.Instance.AxeEffectPool, 1f));
+                    break;
+                case (int)UnitType.Ranged:
+                    GameObject instantiatedBow = TilesManager.Instance.BowEffectPool.Get();
+                    instantiatedBow.transform.SetParent(transform);
+                    instantiatedBow.transform.localPosition = new Vector3(26.5f, 45.4f, 0);
+                    instantiatedBow.transform.localScale = new Vector3(0.75f, 0.75f, 0);
+                    StartCoroutine(ReleaseEffectAfterTime(instantiatedBow, TilesManager.Instance.BowEffectPool, 1f));
+                    break;
+            }
+        }
+
+        if (damage.Target == this)
+        {
+            switch (damage.AttackerUnitType)
+            {
+                case (int)UnitType.Melee:
+                    break;
+                case (int)UnitType.Ranged:
+                    GameObject instantiatedBowLanding = TilesManager.Instance.BowLandingEffectPool.Get();
+                    instantiatedBowLanding.transform.SetParent(transform);
+                    instantiatedBowLanding.transform.localPosition = new Vector3(0, 278, 0);
+                    instantiatedBowLanding.transform.localScale = new Vector3(0.75f, 0.75f, 0);
+                    StartCoroutine(ReleaseEffectAfterTime(instantiatedBowLanding, TilesManager.Instance.BowLandingEffectPool, 1f));
+                    break;
+            }
+            model.TakeDamage(damage.Damage);
+        }
+    }
+
+    // Coroutine to release effects back to the pool
+    private IEnumerator ReleaseEffectAfterTime(GameObject effect, ObjectPool<GameObject> pool, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        pool.Release(effect);
     }
 
     private void OnTileHPChange(TileModel model)

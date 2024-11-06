@@ -24,6 +24,8 @@ public class Events : MonoBehaviour
     public event Action<TileModel> OnTileHPChange;
     //Tile升级事件
     public event Action<TileModel> OnTileLevelChange;
+    //Tile攻击事件
+    public event Action<TileDamage> OnTileAttack;
 
     private void Awake()
     {
@@ -88,5 +90,10 @@ public class Events : MonoBehaviour
     public void TileLevelChange(TileModel tile)
     {
         OnTileLevelChange?.Invoke(tile);
+    }
+
+    public void TileAttack(TileDamage tileDamage)
+    {
+        OnTileAttack?.Invoke(tileDamage);
     }
 }

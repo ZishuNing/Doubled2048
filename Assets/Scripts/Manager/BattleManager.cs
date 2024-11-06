@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+public struct TileDamage
+{
+    public Tile Attacker;
+    public Tile Target;
+    public int AttackerUnitType;
+    public int Damage;
+}
+
 public class BattleManager : Singleton<BattleManager>
 {
     [SerializeField] private TileGrid gridPlayer;
@@ -18,7 +26,7 @@ public class BattleManager : Singleton<BattleManager>
 
 
     // Document the damage dealt to each tile
-    private Dictionary<Tile,int> damageDocument = new Dictionary<Tile, int>();
+    private List<TileDamage> damageDocument = new List<TileDamage>();
 
     private void Start()
     {
@@ -107,24 +115,24 @@ public class BattleManager : Singleton<BattleManager>
         }
     }
 
-    public void RegisterDamage(Tile tile, int damage, PlayerType playerType)
+    public void RegisterDamage(Tile attacker, Tile target, int damage, int attackerUnitType)
     {
-        if (damageDocument.ContainsKey(tile))
+        TileDamage tileDamage = new TileDamage
         {
-            damageDocument[tile] += damage;
-        }
-        else
-        {
-            damageDocument.Add(tile, damage);
-        }
+            Attacker = attacker,
+            Target = target,
+            AttackerUnitType = attackerUnitType,
+            Damage = damage
+        };
+        damageDocument.Add(tileDamage);
     }
 
     private void DealDamageToTile()
     {
-        foreach (var tileDamage in damageDocument)
+        foreach (TileDamage tileDamage in damageDocument)
         {
-            TileModel tileModel = tileDamage.Key.model;
-            tileModel.TakeDamage(tileDamage.Value);
+            // generate damage effect
+            Events.Instance.TileAttack(tileDamage);
         }
         damageDocument.Clear();
     }

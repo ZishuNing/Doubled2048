@@ -178,7 +178,7 @@ public class TileBoardEnemy : MonoBehaviour
                     if (targetTile == null) continue;
                     int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Enemy);
                     if (distance > cell.tile.model.CurAttackRange) continue;
-                    BattleManager.Instance.RegisterDamage(targetTile, cell.tile.model.CurAttack, PlayerType.Enemy);
+                    BattleManager.Instance.RegisterDamage(cell.tile, targetTile, cell.tile.model.CurAttack, cell.tile.state.unitType);
                 }
             }
         }
