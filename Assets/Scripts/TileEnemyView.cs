@@ -18,11 +18,12 @@ public class TileEnemyView : TileView
                 case (int)UnitType.Melee:
                     break;
                 case (int)UnitType.Ranged:
-                    GameObject instantiatedBowLanding = TilesManager.Instance.BowLandingEffectPool.Get();
+                    GameObject instantiatedBowLanding = Instantiate(TilesManager.Instance.BowLandingEffect);//Pool.Get();
                     instantiatedBowLanding.transform.SetParent(transform);
                     instantiatedBowLanding.transform.localPosition = new Vector3(0, 278, 0);
                     instantiatedBowLanding.transform.localScale = new Vector3(0.75f, 0.75f, 0);
-                    StartCoroutine(ReleaseEffectAfterTime(instantiatedBowLanding, TilesManager.Instance.BowLandingEffectPool, 1f));
+                    Destroy(instantiatedBowLanding, 1f);
+                    //StartCoroutine(ReleaseEffectAfterTime(instantiatedBowLanding, TilesManager.Instance.BowLandingEffectPool, 1f));
                     break;
             }
         }

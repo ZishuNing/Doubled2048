@@ -39,12 +39,12 @@ public abstract class TileView : MonoBehaviour
     }
 
     // Coroutine to release effects back to the pool
-    protected IEnumerator ReleaseEffectAfterTime(GameObject effect, ObjectPool<GameObject> pool, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        if (effect != null) // Check if the effect is still valid
-        {
-            pool.Release(effect);
-        }
-    }
+    //protected IEnumerator ReleaseEffectAfterTime(GameObject effect, ObjectPool<GameObject> pool, float delay)
+    //{
+    //    yield return new WaitForSeconds(delay);
+    //    if (effect != null) // Check if the effect is still valid
+    //    {
+    //        pool.Release(effect);
+    //    }
+    //}
 }

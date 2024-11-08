@@ -17,9 +17,9 @@ public class TilesManager : Singleton<TilesManager>
     public GameObject BowEffect;
     public GameObject BowLandingEffect;
     // Object pools
-    public ObjectPool<GameObject> AxeEffectPool;
-    public ObjectPool<GameObject> BowEffectPool;
-    public ObjectPool<GameObject> BowLandingEffectPool;
+    //public ObjectPool<GameObject> AxeEffectPool;
+    //public ObjectPool<GameObject> BowEffectPool;
+    //public ObjectPool<GameObject> BowLandingEffectPool;
 
     protected override void Awake()
     {
@@ -31,28 +31,28 @@ public class TilesManager : Singleton<TilesManager>
         Addressables.LoadAssetAsync<GameObject>("AxeEffect").Completed += handle =>
         {
             AxeEffect = handle.Result;
-            AxeEffectPool = new ObjectPool<GameObject>(() => Instantiate(AxeEffect),
-                                                       go => go.SetActive(true),
-                                                       go => go.SetActive(false),
-                                                       Destroy, true, 10, 50);
+            //AxeEffectPool = new ObjectPool<GameObject>(() => Instantiate(AxeEffect),
+            //                                           go => go.SetActive(true),
+            //                                           go => go.SetActive(false),
+            //                                           Destroy, true, 10, 50);
         };
 
         Addressables.LoadAssetAsync<GameObject>("BowEffect").Completed += handle =>
         {
             BowEffect = handle.Result;
-            BowEffectPool = new ObjectPool<GameObject>(() => Instantiate(BowEffect),
-                                                       go => go.SetActive(true),
-                                                       go => go.SetActive(false),
-                                                       Destroy, true, 10, 50);
+            //BowEffectPool = new ObjectPool<GameObject>(() => Instantiate(BowEffect),
+            //                                           go => go.SetActive(true),
+            //                                           go => go.SetActive(false),
+            //                                           Destroy, true, 10, 50);
         };
 
         Addressables.LoadAssetAsync<GameObject>("BowLandingEffect").Completed += handle =>
         {
             BowLandingEffect = handle.Result;
-            BowLandingEffectPool = new ObjectPool<GameObject>(() => Instantiate(BowLandingEffect),
-                                                             go => go.SetActive(true),
-                                                             go => go.SetActive(false),
-                                                             Destroy, true, 10, 50);
+            //BowLandingEffectPool = new ObjectPool<GameObject>(() => Instantiate(BowLandingEffect),
+            //                                                 go => go.SetActive(true),
+            //                                                 go => go.SetActive(false),
+            //                                                 Destroy, true, 10, 50);
         };
     }
 
