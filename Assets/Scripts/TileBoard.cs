@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TileBoard : MonoBehaviour
 {
     [SerializeField] private GameObject tilePrefab;
+    [SerializeField] private Button PlayerSkillButton;
 
     private TileGrid grid;
     private List<Tile> tiles;
@@ -20,6 +23,14 @@ public class TileBoard : MonoBehaviour
         Events.Instance.OnLittleBattleStart += StartLittleBattle;
         Events.Instance.OnBattleEnd += EndBattle;
         Events.Instance.OnTileDead += OnTileDead;
+    }
+
+    private void Start()
+    {
+        PlayerSkillButton.onClick.AddListener(() =>
+        {
+            PlayerSkill();
+        });
     }
 
     private void OnDestroy()
@@ -102,6 +113,18 @@ public class TileBoard : MonoBehaviour
         Tile tile = go.GetComponent<Tile>();
         tile.Spawn(grid.GetRandomEmptyCell());
         tiles.Add(tile);
+    }
+
+    public void CreateTile(Vector2Int coordinates)
+    {
+        TileCell cell = grid.GetCell(coordinates);
+        if (cell != null && !cell.Occupied)
+        {
+            GameObject go = Instantiate(tilePrefab, grid.transform);
+            Tile tile = go.GetComponent<Tile>();
+            tile.Spawn(cell);
+            tiles.Add(tile);
+        }
     }
 
     private void Move(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
@@ -314,6 +337,15 @@ public class TileBoard : MonoBehaviour
                     BattleManager.Instance.RegisterDamagePlayer(cell.tile, targetTile, cell.tile.model.CurAttack, cell.tile.state.unitType);
                 }
             }
+        }
+    }
+
+    // 玩家技能，给最后列添加一级单位
+    private void PlayerSkill()
+    {
+        for (int y = 0; y < grid.Height; y++)
+        {
+            CreateTile(new Vector2Int(grid.Width - 1, y));
         }
     }
 }
