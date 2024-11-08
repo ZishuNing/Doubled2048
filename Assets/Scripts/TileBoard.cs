@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TileBoard : MonoBehaviour
 {
-    [SerializeField] private Tile tilePrefab;
+    [SerializeField] private GameObject tilePrefab;
 
     private TileGrid grid;
     private List<Tile> tiles;
@@ -98,7 +98,8 @@ public class TileBoard : MonoBehaviour
 
     public void CreateTile()
     {
-        Tile tile = Instantiate(tilePrefab, grid.transform);
+        GameObject go = Instantiate(tilePrefab, grid.transform);
+        Tile tile = go.GetComponent<Tile>();
         tile.Spawn(grid.GetRandomEmptyCell());
         tiles.Add(tile);
     }
@@ -310,7 +311,7 @@ public class TileBoard : MonoBehaviour
                     if (targetTile == null) continue;
                     int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Player);
                     if (distance > cell.tile.model.CurAttackRange) continue;
-                    BattleManager.Instance.RegisterDamage(cell.tile, targetTile, cell.tile.model.CurAttack, cell.tile.state.unitType);
+                    BattleManager.Instance.RegisterDamagePlayer(cell.tile, targetTile, cell.tile.model.CurAttack, cell.tile.state.unitType);
                 }
             }
         }

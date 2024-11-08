@@ -34,7 +34,7 @@ public class TilesManager : Singleton<TilesManager>
             AxeEffectPool = new ObjectPool<GameObject>(() => Instantiate(AxeEffect),
                                                        go => go.SetActive(true),
                                                        go => go.SetActive(false),
-                                                       Destroy, false, 10, 50);
+                                                       Destroy, true, 10, 50);
         };
 
         Addressables.LoadAssetAsync<GameObject>("BowEffect").Completed += handle =>
@@ -43,7 +43,7 @@ public class TilesManager : Singleton<TilesManager>
             BowEffectPool = new ObjectPool<GameObject>(() => Instantiate(BowEffect),
                                                        go => go.SetActive(true),
                                                        go => go.SetActive(false),
-                                                       Destroy, false, 10, 50);
+                                                       Destroy, true, 10, 50);
         };
 
         Addressables.LoadAssetAsync<GameObject>("BowLandingEffect").Completed += handle =>
@@ -52,7 +52,7 @@ public class TilesManager : Singleton<TilesManager>
             BowLandingEffectPool = new ObjectPool<GameObject>(() => Instantiate(BowLandingEffect),
                                                              go => go.SetActive(true),
                                                              go => go.SetActive(false),
-                                                             Destroy, false, 10, 50);
+                                                             Destroy, true, 10, 50);
         };
     }
 

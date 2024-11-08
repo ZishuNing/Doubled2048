@@ -344,7 +344,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 458, y: 179.2}
+  m_AnchoredPosition: {x: 66, y: 126}
   m_SizeDelta: {x: 128, y: 40}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &132951618
@@ -2396,7 +2396,7 @@ RectTransform:
   m_GameObject: {fileID: 997205595}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1518065612}
@@ -2405,7 +2405,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -255.6, y: -31.7}
+  m_AnchoredPosition: {x: -130.1, y: -27.2}
   m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &997205597
@@ -2420,7 +2420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2263f4048e4ee584abc4ce910c331908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 7280697964493053281, guid: 44c416fde68735d4a89872ecfe46b239, type: 3}
+  tilePrefab: {fileID: 4078548043748277473, guid: 44c416fde68735d4a89872ecfe46b239, type: 3}
 --- !u!1 &1031743330
 GameObject:
   m_ObjectHideFlags: 0
@@ -5160,7 +5160,7 @@ RectTransform:
   m_GameObject: {fileID: 1951726800}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1749599678}
@@ -5169,7 +5169,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 264.2, y: -26.7}
+  m_AnchoredPosition: {x: 143.9, y: -26.7}
   m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1951726802
@@ -5184,7 +5184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 670cb3788ab94394a90fc8eb4015911d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 7280697964493053281, guid: 44c416fde68735d4a89872ecfe46b239, type: 3}
+  tilePrefab: {fileID: 4078548043748277473, guid: 56714465cbff8e34da1cef0b5f82ffc5, type: 3}
   levelConfigs:
   - {fileID: 11400000, guid: 4f965572456270a439cfa6196e59718a, type: 2}
   - {fileID: 11400000, guid: 3b4ef1b39654c08438ecc6b9cd1490e0, type: 2}

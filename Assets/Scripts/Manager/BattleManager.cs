@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -26,7 +27,8 @@ public class BattleManager : Singleton<BattleManager>
 
 
     // Document the damage dealt to each tile
-    private List<TileDamage> damageDocument = new List<TileDamage>();
+    private List<TileDamage> PlayerDamageDocument = new List<TileDamage>();
+    private List<TileDamage> EnemyDamageDocument = new List<TileDamage>();
 
     private void Start()
     {
@@ -63,9 +65,25 @@ public class BattleManager : Singleton<BattleManager>
         }
         else
         {
-            DealDamageToTile();
-            Events.Instance.LittleBattleStart();
+            StartCoroutine(DealDamageAndNextBattle());
         }
+    }
+
+    IEnumerator DealDamageAndNextBattle()
+    {
+        foreach (TileDamage tileDamage in PlayerDamageDocument)
+        {
+            Events.Instance.TileAttack(tileDamage);
+        }
+        PlayerDamageDocument.Clear();
+        yield return new WaitForSeconds(1f);
+        foreach (TileDamage tileDamage in EnemyDamageDocument)
+        {
+            Events.Instance.TileAttack(tileDamage);
+        }
+        EnemyDamageDocument.Clear();
+        yield return new WaitForSeconds(1f);
+        Events.Instance.LittleBattleStart();
     }
 
     private void EndBattle()
@@ -115,7 +133,7 @@ public class BattleManager : Singleton<BattleManager>
         }
     }
 
-    public void RegisterDamage(Tile attacker, Tile target, int damage, int attackerUnitType)
+    public void RegisterDamagePlayer(Tile attacker, Tile target, int damage, int attackerUnitType)
     {
         TileDamage tileDamage = new TileDamage
         {
@@ -124,17 +142,19 @@ public class BattleManager : Singleton<BattleManager>
             AttackerUnitType = attackerUnitType,
             Damage = damage
         };
-        damageDocument.Add(tileDamage);
+        PlayerDamageDocument.Add(tileDamage);
     }
 
-    private void DealDamageToTile()
+    public void RegisterDamageEnemy(Tile attacker, Tile target, int damage, int attackerUnitType)
     {
-        foreach (TileDamage tileDamage in damageDocument)
+        TileDamage tileDamage = new TileDamage
         {
-            // generate damage effect
-            Events.Instance.TileAttack(tileDamage);
-        }
-        damageDocument.Clear();
+            Attacker = attacker,
+            Target = target,
+            AttackerUnitType = attackerUnitType,
+            Damage = damage
+        };
+        EnemyDamageDocument.Add(tileDamage);
     }
 
     private void DealDamageToHero()
@@ -169,7 +189,7 @@ public class BattleManager : Singleton<BattleManager>
     //如果没有任何注册的伤害，则战斗结束
     private bool CheckIsBattleDone()
     {
-       return damageDocument.Count == 0;
+       return PlayerDamageDocument.Count == 0;
     }
 
     private void UpdateHPUI()

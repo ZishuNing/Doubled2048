@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TileBoardEnemy : MonoBehaviour
 {
-    [SerializeField] private Tile tilePrefab;
+    [SerializeField] private GameObject tilePrefab;
     [SerializeField] private List<LevelConfig> levelConfigs;
 
     private LevelConfig levelConfig;
@@ -89,7 +89,8 @@ public class TileBoardEnemy : MonoBehaviour
 
     public void CreateSpecificTile(int tileLevel)
     {
-        Tile tile = Instantiate(tilePrefab, grid.transform);
+        GameObject go = Instantiate(tilePrefab, grid.transform);
+        Tile tile = go.GetComponent<Tile>();
         tile.Spawn(grid.GetRandomEmptyCell(), tileLevel);
         tiles.Add(tile);
     }
@@ -178,7 +179,7 @@ public class TileBoardEnemy : MonoBehaviour
                     if (targetTile == null) continue;
                     int distance = BattleManager.Instance.GetDistanceX(cell.coordinates, targetTile.cell.coordinates, PlayerType.Enemy);
                     if (distance > cell.tile.model.CurAttackRange) continue;
-                    BattleManager.Instance.RegisterDamage(cell.tile, targetTile, cell.tile.model.CurAttack, cell.tile.state.unitType);
+                    BattleManager.Instance.RegisterDamageEnemy(cell.tile, targetTile, cell.tile.model.CurAttack, cell.tile.state.unitType);
                 }
             }
         }

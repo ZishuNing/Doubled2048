@@ -11,15 +11,14 @@ public class Tile : MonoBehaviour
     public TileCell cell { get; private set; }
     public bool locked { get; set; }
     public TileModel model { get; private set; }
+    private TileView view;
 
-    private Image avatar;
-    private Image HPbar;
+
 
     private void Awake()
     {
-        avatar = GetComponent<Image>();
-        HPbar = transform.Find("HPbar").GetComponent<Image>();
         model = GetComponent<TileModel>();
+        view = GetComponent<TileView>();
     }
 
     private void Start()
@@ -40,57 +39,17 @@ public class Tile : MonoBehaviour
 
     private void OnTileAttack(TileDamage damage)
     {
-        if(damage.Attacker == this)
-        {
-            switch (damage.AttackerUnitType)
-            {
-                case (int)UnitType.Melee:
-                    GameObject instantiatedAxe = TilesManager.Instance.AxeEffectPool.Get();
-                    instantiatedAxe.transform.SetParent(transform);
-                    instantiatedAxe.transform.localPosition = new Vector3(0, -19, 0);
-                    instantiatedAxe.transform.localScale = Vector3.one;
-                    StartCoroutine(ReleaseEffectAfterTime(instantiatedAxe, TilesManager.Instance.AxeEffectPool, 1f));
-                    break;
-                case (int)UnitType.Ranged:
-                    GameObject instantiatedBow = TilesManager.Instance.BowEffectPool.Get();
-                    instantiatedBow.transform.SetParent(transform);
-                    instantiatedBow.transform.localPosition = new Vector3(26.5f, 45.4f, 0);
-                    instantiatedBow.transform.localScale = new Vector3(0.75f, 0.75f, 0);
-                    StartCoroutine(ReleaseEffectAfterTime(instantiatedBow, TilesManager.Instance.BowEffectPool, 1f));
-                    break;
-            }
-        }
-
         if (damage.Target == this)
         {
-            switch (damage.AttackerUnitType)
-            {
-                case (int)UnitType.Melee:
-                    break;
-                case (int)UnitType.Ranged:
-                    GameObject instantiatedBowLanding = TilesManager.Instance.BowLandingEffectPool.Get();
-                    instantiatedBowLanding.transform.SetParent(transform);
-                    instantiatedBowLanding.transform.localPosition = new Vector3(0, 278, 0);
-                    instantiatedBowLanding.transform.localScale = new Vector3(0.75f, 0.75f, 0);
-                    StartCoroutine(ReleaseEffectAfterTime(instantiatedBowLanding, TilesManager.Instance.BowLandingEffectPool, 1f));
-                    break;
-            }
             model.TakeDamage(damage.Damage);
         }
-    }
-
-    // Coroutine to release effects back to the pool
-    private IEnumerator ReleaseEffectAfterTime(GameObject effect, ObjectPool<GameObject> pool, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        pool.Release(effect);
     }
 
     private void OnTileHPChange(TileModel model)
     {
         if (model == this.model)
         {
-            RefreshUI();
+            view.RefreshUI();
         }
     }
 
@@ -98,7 +57,7 @@ public class Tile : MonoBehaviour
     {
         if (model == this.model)
         {
-            RefreshUI();
+            view.RefreshUI();
         }
     }
 
@@ -122,7 +81,7 @@ public class Tile : MonoBehaviour
         transform.position = cell.transform.position;
         this.model.state = TilesManager.Instance.GetRandomInitState();
         this.model.CurLevel = tileLevel;
-        RefreshUI();
+        view.RefreshUI();
     }
 
     public void MoveTo(TileCell cell)
@@ -152,7 +111,7 @@ public class Tile : MonoBehaviour
     public void Upgrade()
     {
         model.Upgrade();
-        RefreshUI();
+        view.RefreshUI();
     }
 
     public void DestroyTile()
@@ -186,11 +145,4 @@ public class Tile : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    private void RefreshUI()
-    {
-        HPbar.fillAmount = (float)model.CurHealth / model.GetMaxHealth();
-        avatar.sprite = TilesManager.Instance.GetSprite(model.state.unitType, model.CurLevel);
-    }
-
 }
