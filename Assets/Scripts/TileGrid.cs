@@ -64,6 +64,30 @@ public class TileGrid : MonoBehaviour
         return cells[index];
     }
 
+    public TileCell GetRandomEmptyCellInTwoRow()
+    {
+        int index = Random.Range(0, cells.Length/2);
+        int startingIndex = index;
+
+        while (cells[index].Occupied)
+        {
+            index++;
+
+            if (index >= cells.Length)
+            {
+                index = 0;
+            }
+
+            // all cells are occupied
+            if (index == startingIndex)
+            {
+                return null;
+            }
+        }
+
+        return cells[index];
+    }
+
     public void RecoverTilesState()
     {
         foreach (var cell in cells)

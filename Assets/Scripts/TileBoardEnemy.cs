@@ -43,7 +43,7 @@ public class TileBoardEnemy : MonoBehaviour
         CurrentRound = 0;
         foreach (int tileLevel in levelConfigs[CurrentRound].tilesLevel)
         {
-            this.CreateSpecificTile(tileLevel);
+            this.CreateSpecificTile(tileLevel, levelConfigs[CurrentRound].onlyTwoGenerateRow);
         }
     }
 
@@ -68,7 +68,7 @@ public class TileBoardEnemy : MonoBehaviour
 
         foreach (int tileLevel in levelConfig.tilesLevel)
         {
-            this.CreateSpecificTile(tileLevel);
+            this.CreateSpecificTile(tileLevel, levelConfig.onlyTwoGenerateRow);
         }
     }
 
@@ -87,11 +87,12 @@ public class TileBoardEnemy : MonoBehaviour
         tiles.Clear();
     }
 
-    public void CreateSpecificTile(int tileLevel)
+    public void CreateSpecificTile(int tileLevel, bool onlyTwoGenerateRow = false)
     {
         GameObject go = Instantiate(tilePrefab, grid.transform);
         Tile tile = go.GetComponent<Tile>();
-        tile.Spawn(grid.GetRandomEmptyCell(), tileLevel);
+        TileCell cell = onlyTwoGenerateRow ? grid.GetRandomEmptyCellInTwoRow() : grid.GetRandomEmptyCell();
+        tile.Spawn(cell, tileLevel);
         tiles.Add(tile);
     }
 

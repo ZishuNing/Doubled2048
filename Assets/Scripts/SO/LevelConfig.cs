@@ -5,5 +5,6 @@ using UnityEngine;
 public class LevelConfig : ScriptableObject
 {
     public List<int> tilesLevel;
+    public bool onlyTwoGenerateRow = false;
 }
 
