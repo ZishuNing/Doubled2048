@@ -41,8 +41,15 @@ public class Tile : MonoBehaviour
     {
         if (damage.Target == this)
         {
-            model.TakeDamage(damage.Damage);
+            StartCoroutine(TakeDamageAfterTime(damage.Damage, 0.5f));
         }
+    }
+
+    // 过一会再造成伤害，和动画配合
+    IEnumerator TakeDamageAfterTime(int damage, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        model.TakeDamage(damage);
     }
 
     private void OnTileHPChange(TileModel model)
