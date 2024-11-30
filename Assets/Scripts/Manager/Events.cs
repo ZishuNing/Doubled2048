@@ -27,6 +27,14 @@ public class Events : MonoBehaviour
     //Tile攻击事件
     public event Action<TileDamage> OnTileAttack;
 
+    //玩家死亡事件
+    public event Action OnPlayerDead;
+    //敌人死亡事件
+    public event Action OnEnemyDead;
+
+    //游戏结束事件
+    public event Action OnGameEnd;
+
     private void Awake()
     {
         if (Instance != null)
@@ -95,5 +103,20 @@ public class Events : MonoBehaviour
     public void TileAttack(TileDamage tileDamage)
     {
         OnTileAttack?.Invoke(tileDamage);
+    }
+
+    public void PlayerDead()
+    {
+        OnPlayerDead?.Invoke();
+    }
+
+    public void EnemyDead()
+    {
+        OnEnemyDead?.Invoke();
+    }
+
+    internal void GameEnd()
+    {
+        OnGameEnd?.Invoke();
     }
 }

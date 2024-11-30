@@ -18,11 +18,35 @@ public class BattleManager : Singleton<BattleManager>
     [SerializeField] private TileGrid gridEnemy;
 
     // 测试用生命值
-    [SerializeField] private TextMeshProUGUI PlayerHP;
-    [SerializeField] private TextMeshProUGUI EnemyHP;
+    [SerializeField] private TextMeshProUGUI PlayerHPText;
+    [SerializeField] private TextMeshProUGUI EnemyHPText;
     [SerializeField] private CharacterConfig playerConfig;
     [SerializeField] private CharacterConfig enemyConfig;
+    private int PlayerHP
+    {
+        get => playerHP;
+        set
+        {
+            playerHP = value;
+            if (playerHP <= 0)
+            {
+                Events.Instance.PlayerDead();
+            }
+        }
+    }
     private int playerHP;
+    private int EnemyHP
+    {
+        get => enemyHP;
+        set
+        {
+            enemyHP = value;
+            if (enemyHP <= 0)
+            {
+                Events.Instance.EnemyDead();
+            }
+        }
+    }
     private int enemyHP;
 
 
@@ -35,11 +59,17 @@ public class BattleManager : Singleton<BattleManager>
         Events.Instance.OnLittleBattleEnd += EndLittleBattle;
         Events.Instance.OnBattleEnd += EndBattle;
         Events.Instance.OnGameStart += NewGame;
+        Events.Instance.OnEnemyDead += EnemyDead;
 
         // 测试用生命值
-        playerHP = playerConfig.baseHealth;
-        enemyHP = enemyConfig.baseHealth;
+        PlayerHP = playerConfig.baseHealth;
+        EnemyHP = enemyConfig.baseHealth;
         UpdateHPUI();
+    }
+
+    private void EnemyDead()
+    {
+        EnemyHP = enemyConfig.baseHealth;
     }
 
     protected override void OnDestroy()
@@ -52,8 +82,8 @@ public class BattleManager : Singleton<BattleManager>
 
     private void NewGame()
     {
-        playerHP = 10;
-        enemyHP = 10;
+        PlayerHP = 10;
+        EnemyHP = 10;
         UpdateHPUI();
     }
 
@@ -161,8 +191,8 @@ public class BattleManager : Singleton<BattleManager>
     {
         int playerDamage = GetAllDamage(gridPlayer);
         int enemyDamage = GetAllDamage(gridEnemy);
-        enemyHP -= playerDamage;
-        playerHP -= enemyDamage;
+        EnemyHP -= playerDamage;
+        PlayerHP -= enemyDamage;
     }
 
     private int GetAllDamage(TileGrid tileGrid)
@@ -194,7 +224,7 @@ public class BattleManager : Singleton<BattleManager>
 
     private void UpdateHPUI()
     {
-        PlayerHP.text = playerHP.ToString();
-        EnemyHP.text = enemyHP.ToString();
+        PlayerHPText.text = PlayerHP.ToString();
+        EnemyHPText.text = EnemyHP.ToString();
     }
 }

@@ -2,14 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TileBoardEnemy : MonoBehaviour
 {
     [SerializeField] private GameObject tilePrefab;
-    [SerializeField] private List<LevelConfig> levelConfigs;
+    [SerializeField] private List<EnemyConfig> enemyConfigs;
+    [SerializeField] private RawImage enemyAvatar;
 
     private LevelConfig levelConfig;
     private int CurrentRound=0;
+    private int CurrentEnemy=0;
+    private bool isEnemyDead = false;
     private TileGrid grid;
     private List<Tile> tiles;
 
@@ -21,6 +25,7 @@ public class TileBoardEnemy : MonoBehaviour
         Events.Instance.OnLittleBattleStart += StartLittleBattle;
         Events.Instance.OnBattleEnd += BattleEnd;
         Events.Instance.OnTileDead += OnTileDead;
+        Events.Instance.OnEnemyDead += EnemyDead;
     }
 
     private void OnDestroy()
@@ -29,6 +34,7 @@ public class TileBoardEnemy : MonoBehaviour
         Events.Instance.OnLittleBattleStart -= StartLittleBattle;
         Events.Instance.OnBattleEnd -= BattleEnd;
         Events.Instance.OnTileDead -= OnTileDead;
+        Events.Instance.OnEnemyDead -= EnemyDead;
     }
 
     private void OnTileDead(TileModel model)
@@ -36,14 +42,42 @@ public class TileBoardEnemy : MonoBehaviour
         tiles.RemoveAll(tile => tile.model == model);
     }
 
+    private void EnemyDead()
+    {
+        isEnemyDead = true;
+        this.ClearBoard();
+    }
+
+    private IEnumerator LoadNextEnemy()
+    {
+        yield return new WaitForSeconds(0.97f);
+        CurrentRound = 0;
+        CurrentEnemy++;
+        if (CurrentEnemy >= enemyConfigs.Count)
+        {
+            // 敌人全部死亡
+            CurrentEnemy = 0;
+            Events.Instance.GameEnd();
+        }
+
+        // 更新敌人头像
+        enemyAvatar.texture = enemyConfigs[CurrentEnemy].avatar;
+
+        foreach (int tileLevel in enemyConfigs[CurrentEnemy].Levels[CurrentRound].tilesLevel)
+        {
+            this.CreateSpecificTile(tileLevel, enemyConfigs[CurrentEnemy].Levels[CurrentRound].onlyTwoGenerateRow);
+        }
+    }
+
     private void NewGame()
     {
         // update board state
         this.ClearBoard();
         CurrentRound = 0;
-        foreach (int tileLevel in levelConfigs[CurrentRound].tilesLevel)
+        CurrentEnemy = 0;
+        foreach (int tileLevel in enemyConfigs[CurrentEnemy].Levels[CurrentRound].tilesLevel)
         {
-            this.CreateSpecificTile(tileLevel, levelConfigs[CurrentRound].onlyTwoGenerateRow);
+            this.CreateSpecificTile(tileLevel, enemyConfigs[CurrentEnemy].Levels[CurrentRound].onlyTwoGenerateRow);
         }
     }
 
@@ -63,13 +97,22 @@ public class TileBoardEnemy : MonoBehaviour
     IEnumerator GenerateNewLevel()
     {
         yield return new WaitForSeconds(0.05f);
-        CurrentRound++;
-        levelConfig = levelConfigs[CurrentRound % levelConfigs.Count];
-
-        foreach (int tileLevel in levelConfig.tilesLevel)
+        if (isEnemyDead)
         {
-            this.CreateSpecificTile(tileLevel, levelConfig.onlyTwoGenerateRow);
+            StartCoroutine(LoadNextEnemy());
         }
+        else
+        {
+            CurrentRound++;
+            levelConfig = enemyConfigs[CurrentEnemy].Levels[CurrentRound % enemyConfigs[CurrentEnemy].Levels.Count];
+
+            foreach (int tileLevel in levelConfig.tilesLevel)
+            {
+                this.CreateSpecificTile(tileLevel, levelConfig.onlyTwoGenerateRow);
+            }
+        }
+
+        isEnemyDead = false;
     }
 
     public void ClearBoard()
@@ -189,6 +232,6 @@ public class TileBoardEnemy : MonoBehaviour
     //设置敌人关卡
     public void SetLevel(int level)
     {
-        levelConfig = levelConfigs[level];
+        levelConfig = enemyConfigs[CurrentEnemy].Levels[level];
     }
 }
