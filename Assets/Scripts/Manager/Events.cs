@@ -26,14 +26,24 @@ public class Events : MonoBehaviour
     public event Action<TileModel> OnTileLevelChange;
     //Tile攻击事件
     public event Action<TileDamage> OnTileAttack;
+    //合并事件
+    public event Action OnMerge;
 
     //玩家死亡事件
     public event Action OnPlayerDead;
     //敌人死亡事件
     public event Action OnEnemyDead;
+    //敌人死亡后跳出三选一事件
+    public event Action OnEnemyDeadChooseEnd;
+    //加载下个敌人完成事件
+    public event Action OnLoadNextEnemyEnd;
 
     //游戏结束事件
     public event Action OnGameEnd;
+
+    //BUFF事件
+    public event Action<int> OnDealDamageToFrontRow;
+    public event Action OnGenerateExtraUnit;
 
     private void Awake()
     {
@@ -105,6 +115,11 @@ public class Events : MonoBehaviour
         OnTileAttack?.Invoke(tileDamage);
     }
 
+    public void Merge()
+    {
+        OnMerge?.Invoke();
+    }
+
     public void PlayerDead()
     {
         OnPlayerDead?.Invoke();
@@ -115,8 +130,28 @@ public class Events : MonoBehaviour
         OnEnemyDead?.Invoke();
     }
 
-    internal void GameEnd()
+    public void EnemyDeadChooseEnd()
+    {
+        OnEnemyDeadChooseEnd?.Invoke();
+    }
+
+    public void LoadNextEnemyEnd()
+    {
+        OnLoadNextEnemyEnd?.Invoke();
+    }
+
+    public void GameEnd()
     {
         OnGameEnd?.Invoke();
+    }
+
+    public void DealDamageToFrontRow(int damage)
+    {
+        OnDealDamageToFrontRow?.Invoke(damage);
+    }
+
+    public void GenerateExtraUnit()
+    {
+        OnGenerateExtraUnit?.Invoke();
     }
 }

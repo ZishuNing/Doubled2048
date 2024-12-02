@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +12,25 @@ public class TileBoard : MonoBehaviour
     private TileGrid grid;
     private List<Tile> tiles;
     private bool waiting = false;
+    private bool IsCanUseSkill
+    {
+        get => isCanUseSkill;
+        set {
+            isCanUseSkill = value;
+            PlayerSkillButton.interactable = value;
+        }
+    }
+    private bool isCanUseSkill = true;
+    private int SkillCount
+    {
+        get => skillCount;
+        set
+        {
+            skillCount = value;
+            IsCanUseSkill = skillCount > 0 ? false : true;
+        }
+    }
+    private int skillCount = 0;
 
     private void Awake()
     {
@@ -23,6 +41,8 @@ public class TileBoard : MonoBehaviour
         Events.Instance.OnLittleBattleStart += StartLittleBattle;
         Events.Instance.OnBattleEnd += EndBattle;
         Events.Instance.OnTileDead += OnTileDead;
+        Events.Instance.OnGenerateExtraUnit += CreateTile;
+        Events.Instance.OnEnemyDeadChooseEnd += EnemyDeadChooseEnd;
     }
 
     private void Start()
@@ -40,6 +60,8 @@ public class TileBoard : MonoBehaviour
         Events.Instance.OnLittleBattleStart -= StartLittleBattle;
         Events.Instance.OnBattleEnd -= EndBattle;
         Events.Instance.OnTileDead -= OnTileDead;
+        Events.Instance.OnGenerateExtraUnit -= CreateTile;
+        Events.Instance.OnEnemyDeadChooseEnd -= EnemyDeadChooseEnd;
     }
 
     private void OnTileDead(TileModel model)
@@ -58,6 +80,7 @@ public class TileBoard : MonoBehaviour
     private void StartBattle()
     {
         waiting = true;
+        IsCanUseSkill = false;
     }
 
     private void StartLittleBattle()
@@ -70,6 +93,7 @@ public class TileBoard : MonoBehaviour
     private void EndBattle()
     {
         waiting = false;
+        IsCanUseSkill = true;
     }
 
     private void Update()
@@ -115,14 +139,14 @@ public class TileBoard : MonoBehaviour
         tiles.Add(tile);
     }
 
-    public void CreateTile(Vector2Int coordinates)
+    public void CreateTile(Vector2Int coordinates,int tileLevel = 1)
     {
         TileCell cell = grid.GetCell(coordinates);
         if (cell != null && !cell.Occupied)
         {
             GameObject go = Instantiate(tilePrefab, grid.transform);
             Tile tile = go.GetComponent<Tile>();
-            tile.Spawn(cell);
+            tile.Spawn(cell, tileLevel);
             tiles.Add(tile);
         }
     }
@@ -225,6 +249,7 @@ public class TileBoard : MonoBehaviour
         tiles.Remove(a);
         a.Merge(b.cell);
         b.Upgrade();
+        Events.Instance.Merge();
     }
 
     private IEnumerator WaitForMove()
@@ -239,7 +264,6 @@ public class TileBoard : MonoBehaviour
             tile.locked = false;
         }
 
-        Debug.Log("tiles.Count: " + tiles.Count + "grid.size: " + grid.Size);
         if (tiles.Count != grid.Size)
         {
             CreateTile();
@@ -343,9 +367,18 @@ public class TileBoard : MonoBehaviour
     // 玩家技能，给最后列添加一级单位
     private void PlayerSkill()
     {
+        if (!IsCanUseSkill || SkillCount>0) return;
+        int summonLevel = BuffManager.Instance.buffSkillsummonedUnitLevel + BattleManager.Instance.playerConfig.baseSkillsummonedUnitLevel;
         for (int y = 0; y < grid.Height; y++)
         {
-            CreateTile(new Vector2Int(grid.Width - 1, y));
+            CreateTile(new Vector2Int(grid.Width - 1, y), summonLevel);
         }
+        SkillCount++;
+    }
+
+    private void EnemyDeadChooseEnd()
+    {
+        SkillCount = 0;
+        IsCanUseSkill = true;
     }
 }

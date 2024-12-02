@@ -34,5 +34,17 @@ public class TilePlayerView : TileView
                     break;
             }
         }
+
+        if (damage.Target == tile)
+        {
+            // 实例化BowLandingEffect
+            GameObject instantiatedBowLanding = Instantiate(TilesManager.Instance.BiteEffect);
+            instantiatedBowLanding.transform.SetParent(transform);
+            instantiatedBowLanding.transform.localPosition = new Vector3(0, 0, 0);
+            instantiatedBowLanding.transform.localScale = new Vector3(2f, 2f, 1);
+
+            // 销毁效果对象
+            Destroy(instantiatedBowLanding, 1f);
+        }
     }
 }

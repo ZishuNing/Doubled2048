@@ -16,12 +16,12 @@ public class BattleManager : Singleton<BattleManager>
 {
     [SerializeField] private TileGrid gridPlayer;
     [SerializeField] private TileGrid gridEnemy;
+    [SerializeField] private TileBoardEnemy tileBoardEnemy;
 
     // 测试用生命值
     [SerializeField] private TextMeshProUGUI PlayerHPText;
     [SerializeField] private TextMeshProUGUI EnemyHPText;
-    [SerializeField] private CharacterConfig playerConfig;
-    [SerializeField] private CharacterConfig enemyConfig;
+    public PlayerConfig playerConfig;
     private int PlayerHP
     {
         get => playerHP;
@@ -59,17 +59,19 @@ public class BattleManager : Singleton<BattleManager>
         Events.Instance.OnLittleBattleEnd += EndLittleBattle;
         Events.Instance.OnBattleEnd += EndBattle;
         Events.Instance.OnGameStart += NewGame;
-        Events.Instance.OnEnemyDead += EnemyDead;
+        Events.Instance.OnLoadNextEnemyEnd += LoadNextEnemyEnd;
+        Events.Instance.OnDealDamageToFrontRow += DealDamageToFrontRow;
 
         // 测试用生命值
-        PlayerHP = playerConfig.baseHealth;
-        EnemyHP = enemyConfig.baseHealth;
+        PlayerHP = playerConfig.hp;
+        EnemyHP = tileBoardEnemy.GetCurrentEnemy().hp;
         UpdateHPUI();
     }
 
-    private void EnemyDead()
+    private void LoadNextEnemyEnd()
     {
-        EnemyHP = enemyConfig.baseHealth;
+        EnemyHP = tileBoardEnemy.GetCurrentEnemy().hp;
+        UpdateHPUI();
     }
 
     protected override void OnDestroy()
@@ -78,12 +80,14 @@ public class BattleManager : Singleton<BattleManager>
         Events.Instance.OnBattleEnd -= EndLittleBattle;
         Events.Instance.OnBattleEnd -= EndBattle;
         Events.Instance.OnGameStart -= NewGame;
+        Events.Instance.OnLoadNextEnemyEnd -= LoadNextEnemyEnd;
+        Events.Instance.OnDealDamageToFrontRow -= DealDamageToFrontRow;
     }
 
     private void NewGame()
     {
-        PlayerHP = 10;
-        EnemyHP = 10;
+        PlayerHP = playerConfig.hp;
+        EnemyHP = tileBoardEnemy.GetCurrentEnemy().hp;
         UpdateHPUI();
     }
 
@@ -226,5 +230,27 @@ public class BattleManager : Singleton<BattleManager>
     {
         PlayerHPText.text = PlayerHP.ToString();
         EnemyHPText.text = EnemyHP.ToString();
+    }
+
+    // 对敌方前排造成2点伤害
+    public void DealDamageToFrontRow(int damage)
+    {
+        TileGrid tileGrid = gridEnemy;
+        for (int i = 0; i < tileGrid.Height; i++)
+        {
+            TileCell cell = tileGrid.GetCell(0, i);
+            if (cell.Occupied)
+            {
+                Tile tile = cell.tile;
+                TileDamage tileDamage = new TileDamage
+                {
+                    Attacker = tile,
+                    Target = tile,
+                    AttackerUnitType = 0,
+                    Damage = damage
+                };
+                Events.Instance.TileAttack(tileDamage);
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ public class TilesManager : Singleton<TilesManager>
 {
     [SerializeField] private Sprite[] tileMeleeSprites;
     [SerializeField] private Sprite[] tileRangedSprites;
+    [SerializeField] private Sprite[] diceSprites;
     private TileState tileMeleeStates;
     private TileState tileRangedStates;
 
@@ -16,10 +17,7 @@ public class TilesManager : Singleton<TilesManager>
     public GameObject AxeEffect;
     public GameObject BowEffect;
     public GameObject BowLandingEffect;
-    // Object pools
-    //public ObjectPool<GameObject> AxeEffectPool;
-    //public ObjectPool<GameObject> BowEffectPool;
-    //public ObjectPool<GameObject> BowLandingEffectPool;
+    public GameObject BiteEffect;
 
     protected override void Awake()
     {
@@ -31,28 +29,20 @@ public class TilesManager : Singleton<TilesManager>
         Addressables.LoadAssetAsync<GameObject>("AxeEffect").Completed += handle =>
         {
             AxeEffect = handle.Result;
-            //AxeEffectPool = new ObjectPool<GameObject>(() => Instantiate(AxeEffect),
-            //                                           go => go.SetActive(true),
-            //                                           go => go.SetActive(false),
-            //                                           Destroy, true, 10, 50);
         };
 
         Addressables.LoadAssetAsync<GameObject>("BowEffect").Completed += handle =>
         {
             BowEffect = handle.Result;
-            //BowEffectPool = new ObjectPool<GameObject>(() => Instantiate(BowEffect),
-            //                                           go => go.SetActive(true),
-            //                                           go => go.SetActive(false),
-            //                                           Destroy, true, 10, 50);
         };
 
         Addressables.LoadAssetAsync<GameObject>("BowLandingEffect").Completed += handle =>
         {
             BowLandingEffect = handle.Result;
-            //BowLandingEffectPool = new ObjectPool<GameObject>(() => Instantiate(BowLandingEffect),
-            //                                                 go => go.SetActive(true),
-            //                                                 go => go.SetActive(false),
-            //                                                 Destroy, true, 10, 50);
+        };
+        Addressables.LoadAssetAsync<GameObject>("BiteEffect").Completed += handle =>
+        {
+            BiteEffect = handle.Result;
         };
     }
 
@@ -62,7 +52,7 @@ public class TilesManager : Singleton<TilesManager>
         return Random.value < 0.8f ? tileMeleeStates : tileRangedStates;
     }
 
-    public Sprite GetSprite(int unitType,int level)
+    public Sprite GetUnitSprite(int unitType,int level)
     {
         switch ((UnitType)unitType)
         {
@@ -73,5 +63,10 @@ public class TilesManager : Singleton<TilesManager>
             default:
                 return null;
         }
+    }
+
+    public Sprite GetDiceSprite(int diceValue)
+    {
+        return diceSprites[diceValue - 1];
     }
 }

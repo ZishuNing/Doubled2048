@@ -9,6 +9,7 @@ public abstract class TileView : MonoBehaviour
 {
     protected Image avatar;
     protected Image HPbar;
+    protected Image dice;
     protected TileModel model;
     protected Tile tile; 
 
@@ -16,6 +17,7 @@ public abstract class TileView : MonoBehaviour
     {
         avatar = GetComponent<Image>();
         HPbar = transform.Find("HPbar").GetComponent<Image>();
+        dice = transform.Find("DICE").GetComponent<Image>();
         model = GetComponent<TileModel>();
         tile = GetComponent<Tile>();
     }
@@ -35,16 +37,7 @@ public abstract class TileView : MonoBehaviour
     public virtual void RefreshUI()
     {
         HPbar.fillAmount = (float)model.CurHealth / model.GetMaxHealth();
-        avatar.sprite = TilesManager.Instance.GetSprite(model.state.unitType, model.CurLevel);
+        avatar.sprite = TilesManager.Instance.GetUnitSprite(model.state.unitType, model.CurLevel);
+        dice.sprite = TilesManager.Instance.GetDiceSprite(model.CurLevel);
     }
-
-    // Coroutine to release effects back to the pool
-    //protected IEnumerator ReleaseEffectAfterTime(GameObject effect, ObjectPool<GameObject> pool, float delay)
-    //{
-    //    yield return new WaitForSeconds(delay);
-    //    if (effect != null) // Check if the effect is still valid
-    //    {
-    //        pool.Release(effect);
-    //    }
-    //}
 }

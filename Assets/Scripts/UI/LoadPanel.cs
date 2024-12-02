@@ -18,13 +18,15 @@ public class LoadPanel : MonoBehaviour
     private void Start()
     {
         Events.Instance.OnPlayerDead += PlayerDead;
-        Events.Instance.OnEnemyDead += EnemyDead;
+        Events.Instance.OnEnemyDeadChooseEnd += EnemyDeadChooseEnd;
         Events.Instance.OnGameEnd += GameEnd;
     }
 
     private void OnDestroy()
     {
         Events.Instance.OnPlayerDead -= PlayerDead;
+        Events.Instance.OnEnemyDeadChooseEnd -= EnemyDeadChooseEnd;
+        Events.Instance.OnGameEnd -= GameEnd;
     }
 
     private void PlayerDead()
@@ -32,7 +34,7 @@ public class LoadPanel : MonoBehaviour
         SceneManager.LoadScene("YOUDEAD");
     }
 
-    private void EnemyDead()
+    private void EnemyDeadChooseEnd()
     {
         panel.DOColor(new Color(1, 0, 0, 1f), 1f).OnComplete(
             () =>

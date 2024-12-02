@@ -13,7 +13,6 @@ public class TileBoardEnemy : MonoBehaviour
     private LevelConfig levelConfig;
     private int CurrentRound=0;
     private int CurrentEnemy=0;
-    private bool isEnemyDead = false;
     private TileGrid grid;
     private List<Tile> tiles;
 
@@ -25,7 +24,7 @@ public class TileBoardEnemy : MonoBehaviour
         Events.Instance.OnLittleBattleStart += StartLittleBattle;
         Events.Instance.OnBattleEnd += BattleEnd;
         Events.Instance.OnTileDead += OnTileDead;
-        Events.Instance.OnEnemyDead += EnemyDead;
+        Events.Instance.OnEnemyDeadChooseEnd += EnemyDeadChooseEnd;
     }
 
     private void OnDestroy()
@@ -34,7 +33,7 @@ public class TileBoardEnemy : MonoBehaviour
         Events.Instance.OnLittleBattleStart -= StartLittleBattle;
         Events.Instance.OnBattleEnd -= BattleEnd;
         Events.Instance.OnTileDead -= OnTileDead;
-        Events.Instance.OnEnemyDead -= EnemyDead;
+        Events.Instance.OnEnemyDeadChooseEnd -= EnemyDeadChooseEnd;
     }
 
     private void OnTileDead(TileModel model)
@@ -42,10 +41,10 @@ public class TileBoardEnemy : MonoBehaviour
         tiles.RemoveAll(tile => tile.model == model);
     }
 
-    private void EnemyDead()
+    private void EnemyDeadChooseEnd()
     {
-        isEnemyDead = true;
         this.ClearBoard();
+        StartCoroutine(LoadNextEnemy());
     }
 
     private IEnumerator LoadNextEnemy()
@@ -67,6 +66,8 @@ public class TileBoardEnemy : MonoBehaviour
         {
             this.CreateSpecificTile(tileLevel, enemyConfigs[CurrentEnemy].Levels[CurrentRound].onlyTwoGenerateRow);
         }
+
+        Events.Instance.LoadNextEnemyEnd();
     }
 
     private void NewGame()
@@ -75,6 +76,7 @@ public class TileBoardEnemy : MonoBehaviour
         this.ClearBoard();
         CurrentRound = 0;
         CurrentEnemy = 0;
+        enemyAvatar.texture = enemyConfigs[CurrentEnemy].avatar;
         foreach (int tileLevel in enemyConfigs[CurrentEnemy].Levels[CurrentRound].tilesLevel)
         {
             this.CreateSpecificTile(tileLevel, enemyConfigs[CurrentEnemy].Levels[CurrentRound].onlyTwoGenerateRow);
@@ -97,22 +99,18 @@ public class TileBoardEnemy : MonoBehaviour
     IEnumerator GenerateNewLevel()
     {
         yield return new WaitForSeconds(0.05f);
-        if (isEnemyDead)
+        CurrentRound++;
+        if (CurrentRound >= enemyConfigs[CurrentEnemy].Levels.Count)
         {
-            StartCoroutine(LoadNextEnemy());
-        }
-        else
-        {
-            CurrentRound++;
-            levelConfig = enemyConfigs[CurrentEnemy].Levels[CurrentRound % enemyConfigs[CurrentEnemy].Levels.Count];
-
-            foreach (int tileLevel in levelConfig.tilesLevel)
-            {
-                this.CreateSpecificTile(tileLevel, levelConfig.onlyTwoGenerateRow);
-            }
+            yield break;
         }
 
-        isEnemyDead = false;
+        levelConfig = enemyConfigs[CurrentEnemy].Levels[CurrentRound % enemyConfigs[CurrentEnemy].Levels.Count];
+
+        foreach (int tileLevel in levelConfig.tilesLevel)
+        {
+            this.CreateSpecificTile(tileLevel, levelConfig.onlyTwoGenerateRow);
+        }
     }
 
     public void ClearBoard()
@@ -227,6 +225,11 @@ public class TileBoardEnemy : MonoBehaviour
                 }
             }
         }
+    }
+
+    public EnemyConfig GetCurrentEnemy()
+    {
+        return enemyConfigs[CurrentEnemy];
     }
 
     //…Ë÷√µ–»Àπÿø®
