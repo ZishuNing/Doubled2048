@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Enemy3
   m_EditorClassIdentifier: 
   avatar: {fileID: 2800000, guid: 105f1cac159ac854d987d70998b41c15, type: 3}
+  hp: 20
   Levels:
   - {fileID: 11400000, guid: 4f965572456270a439cfa6196e59718a, type: 2}
   - {fileID: 11400000, guid: 3b4ef1b39654c08438ecc6b9cd1490e0, type: 2}
-  - {fileID: 11400000, guid: 18b4f244f14b6434e896c84b0566544e, type: 2}
+  - {fileID: 11400000, guid: bb491356884ff694188e7aa0efca4b9d, type: 2}

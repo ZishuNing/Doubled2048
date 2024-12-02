@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83adfd48f22874d4eb45a2a7bb93da95, type: 3}
-  m_Name: Enemy2
+  m_Name: Enemy1
   m_EditorClassIdentifier: 
-  avatar: {fileID: 2800000, guid: 110257671fe68eb469213dcc3860e1b1, type: 3}
+  avatar: {fileID: 2800000, guid: 57adb951a15e96649a46942e941d3751, type: 3}
+  hp: 5
   Levels:
-  - {fileID: 11400000, guid: 18b4f244f14b6434e896c84b0566544e, type: 2}
-  - {fileID: 11400000, guid: 18b4f244f14b6434e896c84b0566544e, type: 2}
-  - {fileID: 11400000, guid: 18b4f244f14b6434e896c84b0566544e, type: 2}
+  - {fileID: 11400000, guid: 4f965572456270a439cfa6196e59718a, type: 2}
+  - {fileID: 11400000, guid: 3b4ef1b39654c08438ecc6b9cd1490e0, type: 2}
+  - {fileID: 11400000, guid: bb491356884ff694188e7aa0efca4b9d, type: 2}

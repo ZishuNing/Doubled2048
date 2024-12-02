@@ -10,6 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1bc49487893a1fe49af2871b0837c719, type: 3}
-  m_Name: Enemy
+  m_Name: Player
   m_EditorClassIdentifier: 
-  baseHealth: 10
+  hp: 15
+  baseSkillsummonedUnitLevel: 1
